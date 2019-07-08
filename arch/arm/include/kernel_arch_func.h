@@ -111,6 +111,8 @@ z_arch_switch_to_main_thread(struct k_thread *main_thread,
 	"cpsie if          \n\t"   /* __enable_irq(); __enable_fault_irq() */
 	"mov   r1,  #0     \n\t"
 	"msr   BASEPRI, r1 \n\t"   /* __set_BASEPRI(0) */
+#elif defined(CONFIG_ARMV4T)
+	// todo
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */

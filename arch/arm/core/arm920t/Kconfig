@@ -1,0 +1,18 @@
+config CPU_ARM920T
+	bool
+	select CPU_ARM9
+	# Omit prompt to signify "hidden" option
+	select ARMV4T
+	help
+	  This option signifies the use of a arm9 CPU
+	  
+if CPU_ARM9
+ 
+config ARMV4T
+	bool
+	# Omit prompt to signify "hidden" option
+	help
+	  This option signifies the use of an ARMv4t processor
+	  implementation.
+	  
+endif
