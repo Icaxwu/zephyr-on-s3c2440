@@ -1,0 +1,13 @@
+# Kconfig.series - Cypress PSoC6 MCU line
+#
+# Copyright (c) 2018, Cypress Semiconductor
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config SOC_SERIES_S3C2440
+	bool "SAMSUNG S3C2440 series SOC"
+	select SOC_FAMILY_S3C24XX
+	select CPU_ARM920T
+	help
+	  Enable support for Samsung s3c2440 soc series

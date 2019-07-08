@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2017, NXP
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config SOC_FAMILY_S3C24XX
+	bool
+	# omit prompt to signify a "hidden" option
+
+if SOC_FAMILY_S3C24XX
+
+config SOC_FAMILY
+	string
+	default "samsung_24xx"
+	
+source "soc/arm/samsung_24xx/*/Kconfig.soc"	
+
+endif # SOC_FAMILY_S3C24XX

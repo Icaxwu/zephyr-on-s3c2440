@@ -1,0 +1,18 @@
+# Kconfig.defconfig.series - Cypress Semiconductor PSoC6 series configuration
+# options
+#
+# Copyright (c) 2018, Cypress
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+if SOC_SERIES_S3C2440
+
+config SOC_SERIES
+	default "s3c2440"
+
+config SYS_CLOCK_HW_CYCLES_PER_SEC
+	int
+	default 50000000
+
+endif # SOC_SERIES_S3C2440

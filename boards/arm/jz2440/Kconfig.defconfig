@@ -1,0 +1,5 @@
+if BOARD_S3C2440_100ASK
+
+
+
+endif

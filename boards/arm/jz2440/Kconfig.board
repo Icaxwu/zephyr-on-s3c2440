@@ -1,0 +1,2 @@
+config  BOARD_S3C2440_100ASK
+	bool "S3C2400 100ASK"

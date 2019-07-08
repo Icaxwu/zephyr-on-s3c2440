@@ -28,6 +28,11 @@ config CPU_CORTEX_M
 	help
 	  This option signifies the use of a CPU of the Cortex-M family.
 
+config CPU_ARM920T
+	bool
+	help
+	  This option signifies the use of a CPU of the ARM920T family.
+
 config CPU_HAS_SYSTICK
 	bool
 	# Omit prompt to signify "hidden" option
