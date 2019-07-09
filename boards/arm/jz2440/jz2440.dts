@@ -1,0 +1,34 @@
+/*
+ * Copyright (c) 2017 Shawn Nock <shawn@monadnock.ca>
+ * Copyright (c) 2017 Linaro Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+#include <samsung/s3c2440.dtsi>
+
+/ {
+	model = "ask100 jz2440 Dev Kit";
+	compatible = "ask100,jz2440";
+
+	aliases {
+		led0 = &led0;
+		led1 = &led1;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		led0: led_0 {
+			gpios = <&gpio0 17 GPIO_INT_ACTIVE_LOW>;
+			label = "Green LED 0";
+		};
+		
+		led1: led_1 {
+			gpios = <&gpio0 18 GPIO_INT_ACTIVE_LOW>;
+			label = "Green LED 1";
+		};
+	};
+	
+};
+

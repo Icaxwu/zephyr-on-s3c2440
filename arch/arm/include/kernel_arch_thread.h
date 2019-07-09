@@ -44,6 +44,7 @@ struct _caller_saved {
 typedef struct _caller_saved _caller_saved_t;
 
 struct _callee_saved {
+#if defined(CONFIG_CPU_CORTEX_M)
 	u32_t v1;  /* r4 */
 	u32_t v2;  /* r5 */
 	u32_t v3;  /* r6 */
@@ -53,6 +54,7 @@ struct _callee_saved {
 	u32_t v7;  /* r10 */
 	u32_t v8;  /* r11 */
 	u32_t psp; /* r13 */
+#endif
 };
 
 typedef struct _callee_saved _callee_saved_t;

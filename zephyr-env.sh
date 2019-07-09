@@ -46,6 +46,8 @@ fi
 # identify OS source tree root directory
 export ZEPHYR_BASE=$( builtin cd "$( dirname "$DIR" )" > /dev/null && pwd ${PWD_OPT})
 unset PWD_OPT
+export ZEPHYR_TOOLCHAIN_VARIANT=zephyr
+export ZEPHYR_SDK_INSTALL_DIR=/opt/zephyr-sdk
 
 scripts_path=${ZEPHYR_BASE}/scripts
 if [ "$win_build" -eq 1 ]; then

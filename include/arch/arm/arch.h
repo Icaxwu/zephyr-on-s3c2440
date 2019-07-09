@@ -34,6 +34,10 @@
 #include <arch/arm/cortex_m/nmi.h>
 #endif
 
+#ifdef CONFIG_CPU_ARM9
+#include <arch/arm/arm9/exc.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

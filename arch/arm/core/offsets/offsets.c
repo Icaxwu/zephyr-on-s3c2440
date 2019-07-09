@@ -37,7 +37,21 @@ GEN_OFFSET_SYM(_thread_arch_t, priv_stack_start);
 #ifdef CONFIG_FLOAT
 GEN_OFFSET_SYM(_thread_arch_t, preempt_float);
 #endif
-
+#if defined(CONFIG_CPU_ARM9)
+GEN_OFFSET_SYM(_esf_t, r0);
+GEN_OFFSET_SYM(_esf_t, r1);
+GEN_OFFSET_SYM(_esf_t, r2);
+GEN_OFFSET_SYM(_esf_t, r3);
+GEN_OFFSET_SYM(_esf_t, r4);
+GEN_OFFSET_SYM(_esf_t, r5);
+GEN_OFFSET_SYM(_esf_t, r6);
+GEN_OFFSET_SYM(_esf_t, r7);
+GEN_OFFSET_SYM(_esf_t, r8);
+GEN_OFFSET_SYM(_esf_t, r9);
+GEN_OFFSET_SYM(_esf_t, r10);
+GEN_OFFSET_SYM(_esf_t, r11);
+GEN_OFFSET_SYM(_esf_t, r12);
+#else
 GEN_OFFSET_SYM(_esf_t, a1);
 GEN_OFFSET_SYM(_esf_t, a2);
 GEN_OFFSET_SYM(_esf_t, a3);
@@ -63,7 +77,7 @@ GEN_OFFSET_SYM(_callee_saved_t, v6);
 GEN_OFFSET_SYM(_callee_saved_t, v7);
 GEN_OFFSET_SYM(_callee_saved_t, v8);
 GEN_OFFSET_SYM(_callee_saved_t, psp);
-
+#endif
 /* size of the entire preempt registers structure */
 
 GEN_ABSOLUTE_SYM(___callee_saved_t_SIZEOF, sizeof(struct _callee_saved));

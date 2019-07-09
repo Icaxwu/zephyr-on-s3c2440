@@ -1,0 +1,34 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+
+#include <dt-bindings/gpio/gpio.h>
+
+/ {
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu@0 {
+			device_type = "cpu";
+			compatible = "arm,arm920t";
+			reg = <0>;
+		};
+	};
+
+	aliases {
+		gpio-0 = &gpio0;
+	};
+	
+	soc {
+		#address-cells = <0x01>;
+		#size-cells = <0x01>;
+		
+		gpio0: gpio@50000000 {
+			compatible = "nordic,nrf-gpio";
+			gpio-controller;
+			reg = <0x50000000 0x1000>;
+			#gpio-cells = <2>;
+			label = "GPIO_0";
+			status = "ok";
+		};
+	};
+};
