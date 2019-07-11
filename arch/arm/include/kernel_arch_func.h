@@ -113,6 +113,7 @@ z_arch_switch_to_main_thread(struct k_thread *main_thread,
 	"msr   BASEPRI, r1 \n\t"   /* __set_BASEPRI(0) */
 #elif defined(CONFIG_ARMV4T)
 	// todo
+#elif defined(CONFIG_ARMV4T)
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */

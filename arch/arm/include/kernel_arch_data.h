@@ -48,9 +48,12 @@ typedef struct __esf _esf_t;
 #define STACK_ROUND_UP(x) ROUND_UP(x, STACK_ALIGN_SIZE)
 #define STACK_ROUND_DOWN(x) ROUND_DOWN(x, STACK_ALIGN_SIZE)
 
-#ifdef CONFIG_CPU_CORTEX_M
+#if defined(CONFIG_CPU_CORTEX_M) 
 #include <cortex_m/stack.h>
 #include <cortex_m/exc.h>
+#elif defined(CONFIG_CPU_ARM9)
+#include <arm9/stack.h>
+#include <arm9/exc.h>
 #endif
 
 #ifndef _ASMLANGUAGE

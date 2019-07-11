@@ -30,6 +30,8 @@ GTEXT(__usage_fault)
 GTEXT(__secure_fault)
 #endif /* CONFIG_ARM_SECURE_FIRMWARE*/
 GTEXT(__debug_monitor)
+#elif defined(CONFIG_ARMV4T)
+
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */
@@ -70,6 +72,8 @@ SECTION_SUBSEC_FUNC(TEXT,__fault,__usage_fault)
 SECTION_SUBSEC_FUNC(TEXT,__fault,__secure_fault)
 #endif /* CONFIG_ARM_SECURE_FIRMWARE */
 SECTION_SUBSEC_FUNC(TEXT,__fault,__debug_monitor)
+#elif defined(CONFIG_ARMV4T)
+
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */
@@ -127,6 +131,8 @@ _s_stack_frame_msp:
 	mrs r0, MSP
 _s_stack_frame_endif:
 #endif /* CONFIG_ARM_SECURE_FIRMWARE || CONFIG_ARM_NONSECURE_FIRMWARE */
+#elif defined(CONFIG_ARMV4T)
+
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */

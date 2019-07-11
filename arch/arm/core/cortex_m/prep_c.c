@@ -63,6 +63,8 @@ void lock_interrupts(void)
 	__disable_irq();
 #elif defined(CONFIG_ARMV7_M_ARMV8_M_MAINLINE)
 	__set_BASEPRI(_EXC_IRQ_DEFAULT_PRIO);
+#elif defined(CONFIG_ARMV4T)
+	
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */

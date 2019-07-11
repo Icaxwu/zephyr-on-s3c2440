@@ -594,7 +594,7 @@ static void DebugMonitor(const NANO_ESF *esf)
 	PR_FAULT_INFO(
 		"***** Debug monitor exception (not implemented) *****\n");
 }
-
+#elif defined(CONFIG_ARMV4T)
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */
@@ -634,6 +634,8 @@ static u32_t HardFault(NANO_ESF *esf)
 #endif /* CONFIG_ARM_SECURE_FIRMWARE */
 		}
 	}
+#elif defined(CONFIG_ARMV4T)
+
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */
@@ -687,6 +689,7 @@ static u32_t FaultHandle(NANO_ESF *esf, int fault)
 	case 12:
 		DebugMonitor(esf);
 		break;
+#elif defined(CONFIG_ARMV4T)
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */
@@ -786,8 +789,11 @@ static void SecureStackDump(const NANO_ESF *secure_esf)
 void _Fault(NANO_ESF *esf, u32_t exc_return)
 {
 	u32_t reason = _NANO_ERR_HW_EXCEPTION;
+#if defined(CONFIG_CPU_CORTEX_M)	
 	int fault = SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk;
-
+#elif defined(CONFIG_CPU_ARM9)
+	int fault = 0;
+#endif
 	LOG_PANIC();
 
 #if defined(CONFIG_ARM_SECURE_FIRMWARE)
@@ -885,6 +891,7 @@ void z_FaultInit(void)
 #if defined(CONFIG_ARMV6_M_ARMV8_M_BASELINE)
 #elif defined(CONFIG_ARMV7_M_ARMV8_M_MAINLINE)
 	SCB->CCR |= SCB_CCR_DIV_0_TRP_Msk;
+#elif defined(CONFIG_ARMV4T)
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */

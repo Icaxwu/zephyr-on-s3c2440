@@ -163,6 +163,7 @@ do {                                                                    \
 
 #ifdef CONFIG_ARM
 
+#if defined(CONFIG_CPU_CORTEX_M)
 #if defined(CONFIG_ISA_THUMB2)
 
 #define FUNC_CODE() .thumb;
@@ -173,6 +174,12 @@ do {                                                                    \
 #error unknown instruction set
 
 #endif /* ISA */
+#elif defined(CONFIG_CPU_ARM9)
+
+#define FUNC_CODE()
+#define FUNC_INSTR(a)
+
+#endif
 
 #else
 

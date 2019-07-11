@@ -58,6 +58,8 @@ struct __esf {
 	u32_t r10;
 	u32_t r11;
 	u32_t r12;
+	sys_define_gpr_with_alias(lr, r14);
+	sys_define_gpr_with_alias(pc, r15);
 #ifdef CONFIG_FLOAT
 #endif
 };

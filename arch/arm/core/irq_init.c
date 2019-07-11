@@ -35,9 +35,11 @@
 
 void z_IntLibInit(void)
 {
+#if defined(CONFIG_CPU_CORTEX_M)
 	int irq = 0;
 
 	for (; irq < CONFIG_NUM_IRQS; irq++) {
 		NVIC_SetPriority((IRQn_Type)irq, _IRQ_PRIO_OFFSET);
 	}
+#endif
 }

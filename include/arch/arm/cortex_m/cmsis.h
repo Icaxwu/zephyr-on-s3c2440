@@ -10,6 +10,7 @@
  *
  * This header contains the interface to the ARM CMSIS Core headers.
  */
+#ifdef CONFIG_CPU_CORTEX_M
 
 #ifndef ZEPHYR_INCLUDE_ARCH_ARM_CORTEX_M_CMSIS_H_
 #define ZEPHYR_INCLUDE_ARCH_ARM_CORTEX_M_CMSIS_H_
@@ -115,3 +116,5 @@ typedef enum {
 #endif
 
 #endif /* ZEPHYR_INCLUDE_ARCH_ARM_CORTEX_M_CMSIS_H_ */
+
+#endif /* CONFIG_CPU_CORTEX_M */

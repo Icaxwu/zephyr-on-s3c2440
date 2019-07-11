@@ -55,6 +55,8 @@ void z_new_thread(struct k_thread *thread, k_thread_stack_t *stack,
 		 void *parameter1, void *parameter2, void *parameter3,
 		 int priority, unsigned int options)
 {
+#if defined(CONFIG_CPU_CORTEX_M)	
+
 	char *pStackMem = Z_THREAD_STACK_BUFFER(stack);
 	char *stackEnd;
 	/* Offset between the top of stack and the high end of stack area. */
@@ -141,6 +143,9 @@ void z_new_thread(struct k_thread *thread, k_thread_stack_t *stack,
 	 * initial values in all other registers/thread entries are
 	 * irrelevant.
 	 */
+#elif defined(CONFIG_CPU_ARM9)
+	
+#endif
 }
 
 #ifdef CONFIG_USERSPACE

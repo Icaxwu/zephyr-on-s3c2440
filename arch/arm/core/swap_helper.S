@@ -42,6 +42,9 @@ GDATA(_kernel)
  */
 
 SECTION_FUNC(TEXT, __pendsv)
+#if defined(CONFIG_ARMV4T)
+
+#else
 
 #ifdef CONFIG_TRACING
     /* Register the context switch */
@@ -257,7 +260,7 @@ _thread_irq_disabled:
 
     /* exc return */
     bx lr
-
+#endif
 #if defined(CONFIG_ARMV6_M_ARMV8_M_BASELINE)
 
 /**
@@ -440,6 +443,9 @@ valid_syscall_id:
     /* return from SVC to the modified LR - z_arm_do_syscall */
     bx lr
 #endif
+
+#elif defined(CONFIG_ARMV4T)
+
 
 #else
 #error Unknown ARM architecture

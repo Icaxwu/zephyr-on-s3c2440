@@ -82,6 +82,7 @@ _idle_state_cleared:
 		/* clear kernel idle state */
 		strne	r1, [r2, #_kernel_offset_to_idle]
 		blne	z_sys_power_save_idle_exit
+#elif defined(CONFIG_ARMV4T)
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */
@@ -97,6 +98,7 @@ _idle_state_cleared:
 #elif defined(CONFIG_ARMV7_M_ARMV8_M_MAINLINE)
 	sub r0, r0, #16	/* get IRQ number */
 	lsl r0, r0, #3	/* table is 8-byte wide */
+#elif defined(CONFIG_ARMV4T)
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */
@@ -128,6 +130,7 @@ _idle_state_cleared:
 	mov lr, r3
 #elif defined(CONFIG_ARMV7_M_ARMV8_M_MAINLINE)
 	pop {r0, lr}
+#elif defined(CONFIG_ARMV4T)
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */

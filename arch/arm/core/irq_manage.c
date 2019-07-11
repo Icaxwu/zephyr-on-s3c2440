@@ -42,7 +42,11 @@ extern void __reserved(void);
  */
 void z_arch_irq_enable(unsigned int irq)
 {
+#if defined(CONFIG_CPU_CORTEX_M)	
 	NVIC_EnableIRQ((IRQn_Type)irq);
+#elif defined(CONFIG_CPU_ARM9)
+	
+#endif
 }
 
 /**
@@ -56,7 +60,11 @@ void z_arch_irq_enable(unsigned int irq)
  */
 void z_arch_irq_disable(unsigned int irq)
 {
+#if defined(CONFIG_CPU_CORTEX_M)	
 	NVIC_DisableIRQ((IRQn_Type)irq);
+#elif defined(CONFIG_CPU_ARM9)
+	
+#endif
 }
 
 /**
@@ -67,7 +75,11 @@ void z_arch_irq_disable(unsigned int irq)
  */
 int z_arch_irq_is_enabled(unsigned int irq)
 {
+#if defined(CONFIG_CPU_CORTEX_M)	
 	return NVIC->ISER[REG_FROM_IRQ(irq)] & BIT(BIT_FROM_IRQ(irq));
+#elif defined(CONFIG_CPU_ARM9)
+	return 0;
+#endif
 }
 
 /**
@@ -112,7 +124,11 @@ void z_irq_priority_set(unsigned int irq, unsigned int prio, u32_t flags)
 		 "invalid priority %d! values must be less than %lu\n",
 		 prio - _IRQ_PRIO_OFFSET,
 		 BIT(DT_NUM_IRQ_PRIO_BITS) - (_IRQ_PRIO_OFFSET));
+#if defined(CONFIG_CPU_CORTEX_M)	
 	NVIC_SetPriority((IRQn_Type)irq, prio);
+#elif defined(CONFIG_CPU_ARM9)
+	
+#endif
 }
 
 /**
@@ -155,6 +171,8 @@ void _arch_isr_direct_pm(void)
 	 * arch/arm/core/isr_wrapper.S
 	 */
 	__asm__ volatile("cpsid i" : : : "memory");
+#elif defined(CONFIG_ARMV4T)
+
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */
@@ -170,6 +188,8 @@ void _arch_isr_direct_pm(void)
 	irq_unlock(key);
 #elif defined(CONFIG_ARMV7_M_ARMV8_M_MAINLINE)
 	__asm__ volatile("cpsie i" : : : "memory");
+#elif defined(CONFIG_ARMV4T)
+
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */

@@ -55,8 +55,12 @@ int __swap(int key)
 	_current->arch.basepri = key;
 	_current->arch.swap_return_value = _k_neg_eagain;
 
+#if defined(CONFIG_CPU_CORTEX_M)	
 	/* set pending bit to make sure we will take a PendSV exception */
 	SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
+#elif defined(CONFIG_CPU_ARM9)
+	
+#endif
 
 	/* clear mask or enable all irqs to take a pendsv */
 	irq_unlock(0);

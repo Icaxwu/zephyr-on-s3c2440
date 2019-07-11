@@ -61,6 +61,7 @@ SECTION_SUBSEC_FUNC(exc_vector_table,_vector_table_section,_vector_table)
     .word __reserved
     .word __svc
     .word __debug_monitor
+#elif defined(CONFIG_ARMV4T)
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */

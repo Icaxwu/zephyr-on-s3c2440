@@ -11,8 +11,8 @@
  * Exception/interrupt context helpers.
  */
 
-#ifndef ZEPHYR_ARCH_ARM_INCLUDE_CORTEX_M_EXC_H_
-#define ZEPHYR_ARCH_ARM_INCLUDE_CORTEX_M_EXC_H_
+#ifndef ZEPHYR_ARCH_ARM_INCLUDE_ARM9_EXC_H_
+#define ZEPHYR_ARCH_ARM_INCLUDE_ARM9_EXC_H_
 
 #include <arch/cpu.h>
 
@@ -26,8 +26,7 @@ extern "C" {
 
 #else
 
-#include <arch/arm/cortex_m/cmsis.h>
-#include <arch/arm/cortex_m/exc.h>
+#include <arch/arm/arm9/exc.h>
 #include <irq_offload.h>
 
 #ifdef CONFIG_IRQ_OFFLOAD
@@ -96,46 +95,7 @@ static ALWAYS_INLINE bool z_IsInIsr(void)
  */
 static ALWAYS_INLINE void z_ExcSetup(void)
 {
-	NVIC_SetPriority(PendSV_IRQn, 0xff);
 
-#ifdef CONFIG_CPU_CORTEX_M_HAS_BASEPRI
-	NVIC_SetPriority(SVCall_IRQn, _EXC_SVC_PRIO);
-#endif
-
-#ifdef CONFIG_CPU_CORTEX_M_HAS_PROGRAMMABLE_FAULT_PRIOS
-	NVIC_SetPriority(MemoryManagement_IRQn, _EXC_FAULT_PRIO);
-	NVIC_SetPriority(BusFault_IRQn, _EXC_FAULT_PRIO);
-	NVIC_SetPriority(UsageFault_IRQn, _EXC_FAULT_PRIO);
-#if defined(CONFIG_ARM_SECURE_FIRMWARE)
-	NVIC_SetPriority(SecureFault_IRQn, _EXC_FAULT_PRIO);
-#endif /* CONFIG_ARM_SECURE_FIRMWARE */
-
-	/* Enable Usage, Mem, & Bus Faults */
-	SCB->SHCSR |= SCB_SHCSR_USGFAULTENA_Msk | SCB_SHCSR_MEMFAULTENA_Msk |
-		      SCB_SHCSR_BUSFAULTENA_Msk;
-#if defined(CONFIG_ARM_SECURE_FIRMWARE)
-	/* Enable Secure Fault */
-	SCB->SHCSR |= SCB_SHCSR_SECUREFAULTENA_Msk;
-	/* Clear BFAR before setting BusFaults to target Non-Secure state. */
-	SCB->BFAR = 0;
-#endif /* CONFIG_ARM_SECURE_FIRMWARE */
-#endif /* CONFIG_CPU_CORTEX_M_HAS_PROGRAMMABLE_FAULT_PRIOS */
-
-#if defined(CONFIG_ARM_SECURE_FIRMWARE)
-	/* Set NMI, Hard, and Bus Faults as Non-Secure.
-	 * NMI and Bus Faults targeting the Secure state will
-	 * escalate to a SecureFault or SecureHardFault.
-	 */
-	SCB->AIRCR =
-		(SCB->AIRCR & (~(SCB_AIRCR_VECTKEY_Msk)))
-		| SCB_AIRCR_BFHFNMINS_Msk
-		| ((AIRCR_VECT_KEY_PERMIT_WRITE << SCB_AIRCR_VECTKEY_Pos) &
-			SCB_AIRCR_VECTKEY_Msk);
-	/* Note: Fault conditions that would generate a SecureFault
-	 * in a PE with the Main Extension instead generate a
-	 * SecureHardFault in a PE without the Main Extension.
-	 */
-#endif /* CONFIG_ARM_SECURE_FIRMWARE */
 }
 
 /**
@@ -169,4 +129,4 @@ static ALWAYS_INLINE void z_clearfaults(void)
 #endif
 
 
-#endif /* ZEPHYR_ARCH_ARM_INCLUDE_CORTEX_M_EXC_H_ */
+#endif /* ZEPHYR_ARCH_ARM_INCLUDE_ARM9_EXC_H_ */

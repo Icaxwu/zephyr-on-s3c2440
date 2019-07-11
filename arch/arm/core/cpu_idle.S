@@ -50,10 +50,14 @@ GTEXT(k_cpu_atomic_idle)
  */
 
 SECTION_FUNC(TEXT, z_CpuIdleInit)
+#if defined(CONFIG_ARMV4T)
+
+#else
 	ldr r1, =_SCB_SCR
 	movs.n r2, #_SCR_INIT_BITS
 	str r2, [r1]
 	bx lr
+#endif
 
 #ifdef CONFIG_SYS_POWER_MANAGEMENT
 
@@ -113,6 +117,9 @@ SECTION_FUNC(TEXT, _NanoIdleValClear)
  */
 
 SECTION_FUNC(TEXT, k_cpu_idle)
+#if defined(CONFIG_ARMV4T)
+
+#else
 #ifdef CONFIG_TRACING
 	push {r0, lr}
 	bl    z_sys_trace_idle
@@ -137,7 +144,7 @@ SECTION_FUNC(TEXT, k_cpu_idle)
 	wfi
 
 	bx lr
-
+#endif
 /**
  *
  * @brief Atomically re-enable interrupts and enter low power mode
@@ -161,6 +168,9 @@ SECTION_FUNC(TEXT, k_cpu_idle)
  */
 
 SECTION_FUNC(TEXT, k_cpu_atomic_idle)
+#if defined(CONFIG_ARMV4T)
+
+#else
 #ifdef CONFIG_TRACING
 	push {r0, lr}
 	bl    z_sys_trace_idle
@@ -209,3 +219,4 @@ _irq_disabled:
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */
 	bx lr
+#endif

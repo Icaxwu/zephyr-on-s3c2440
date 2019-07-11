@@ -40,12 +40,16 @@ void z_impl_k_thread_abort(k_tid_t thread)
 	z_thread_monitor_exit(thread);
 
 	if (_current == thread) {
+#if defined(CONFIG_ARMV4T)
+
+#else
 		if ((SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk) == 0) {
 			(void)z_swap_irqlock(key);
 			CODE_UNREACHABLE;
 		} else {
 			SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 		}
+#endif
 	}
 
 	/* The abort handler might have altered the ready queue. */
