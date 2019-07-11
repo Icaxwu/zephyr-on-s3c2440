@@ -52,13 +52,21 @@ include(${ZEPHYR_BASE}/cmake/gcc-m-cpu.cmake)
 
 if("${ARCH}" STREQUAL "arm")
   list(APPEND TOOLCHAIN_C_FLAGS
-    -mthumb
     -mcpu=${GCC_M_CPU}
     )
+  if(CONFIG_CPU_CORTEX_M)
+  list(APPEND TOOLCHAIN_C_FLAGS
+      -mthumb
+    )
+  endif()
   list(APPEND TOOLCHAIN_LD_FLAGS
-    -mthumb
     -mcpu=${GCC_M_CPU}
     )
+  if(CONFIG_CPU_CORTEX_M)
+    list(APPEND TOOLCHAIN_LD_FLAGS
+      -mthumb
+    )
+  endif()
 
   include(${ZEPHYR_BASE}/cmake/fpu-for-gcc-m-cpu.cmake)
 

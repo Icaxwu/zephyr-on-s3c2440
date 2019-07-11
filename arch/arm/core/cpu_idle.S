@@ -51,7 +51,7 @@ GTEXT(k_cpu_atomic_idle)
 
 SECTION_FUNC(TEXT, z_CpuIdleInit)
 #if defined(CONFIG_ARMV4T)
-
+	bx	lr
 #else
 	ldr r1, =_SCB_SCR
 	movs.n r2, #_SCR_INIT_BITS

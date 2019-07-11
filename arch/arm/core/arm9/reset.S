@@ -56,12 +56,19 @@ SECTION_SUBSEC_FUNC(TEXT,_reset_section,__reset)
  */
 SECTION_SUBSEC_FUNC(TEXT,_reset_section,__start)
 
+    /* 如果当前从nor里启动，sram的映射地址是0x40001000
+       如果当前从nand里启动，sram的映射地址是0x1000
+     */
+    ldr sp, =0x40001000         
+
+    ldr     r0, =0x53000000     @ WATCHDOG寄存器地址
+    mov     r1, #0x0                     
+    str     r1, [r0]            @ 写入0，禁止WATCHDOG，否则CPU会不断重启
+
 #if defined(CONFIG_PLATFORM_SPECIFIC_INIT)
     bl _PlatformInit
 #endif
 
-    /* lock interrupts: will get unlocked when switch to main task */
-    bl	lock_interrupts
 #ifdef CONFIG_WDOG_INIT
     /* board-specific watchdog initialization is necessary */
     bl _WdogInit

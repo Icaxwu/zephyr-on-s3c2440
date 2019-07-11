@@ -36,19 +36,6 @@
 
 #include <string.h>
 
-void lock_interrupts(void)
-{
-#if defined(CONFIG_ARMV6_M_ARMV8_M_BASELINE)
-	__disable_irq();
-#elif defined(CONFIG_ARMV7_M_ARMV8_M_MAINLINE)
-	__set_BASEPRI(_EXC_IRQ_DEFAULT_PRIO);
-#elif defined(CONFIG_ARMV4T)
-	
-#else
-#error Unknown ARM architecture
-#endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */
-}
-
 #ifdef CONFIG_INIT_STACKS
 static inline void init_stacks(void)
 {
@@ -56,8 +43,18 @@ static inline void init_stacks(void)
 }
 #endif
 
+#define	GPFCON		(*(volatile unsigned long *)0x56000050)
+#define	GPFDAT		(*(volatile unsigned long *)0x56000054)
 
-
+#define	GPF4_out	(1<<(4*2))
+#define	GPF5_out	(1<<(5*2))
+#define	GPF6_out	(1<<(6*2))
+#define	GPF7_out	(1<<(7*2))
+void wait(int dly)
+{
+	volatile int loop = dly;
+	for(; loop > 0; loop--);
+}
 
 extern FUNC_NORETURN void z_cstart(void);
 /**
@@ -79,6 +76,12 @@ void _PrepC(void)
 #ifdef CONFIG_INIT_STACKS
 	init_stacks();
 #endif
+	{
+		// 将LED1-3对应的GPF4/5/6三个引脚设为输出
+		GPFCON = GPF4_out|GPF5_out|GPF6_out;
+
+		GPFDAT &= ~(1<<4);
+	}
 
 	z_bss_zero();
 	z_data_copy();
