@@ -41,17 +41,11 @@
 #endif
 
 #define ROM_ADDR (CONFIG_FLASH_BASE_ADDRESS + CONFIG_FLASH_LOAD_OFFSET)
-#ifdef CONFIG_TI_CCFG_PRESENT
-  #define CCFG_SIZE 88
-  #define ROM_SIZE (CONFIG_FLASH_SIZE*1K - CONFIG_FLASH_LOAD_OFFSET - \
-		    CCFG_SIZE)
-  #define CCFG_ADDR (ROM_ADDR + ROM_SIZE)
-#else
+
 #if CONFIG_FLASH_LOAD_SIZE > 0
   #define ROM_SIZE CONFIG_FLASH_LOAD_SIZE
 #else
   #define ROM_SIZE (CONFIG_FLASH_SIZE*1K - CONFIG_FLASH_LOAD_OFFSET)
-#endif
 #endif
 
 #if defined(CONFIG_XIP)
@@ -90,12 +84,6 @@ _region_min_align = 4;
 MEMORY
     {
     FLASH                 (rx) : ORIGIN = ROM_ADDR, LENGTH = ROM_SIZE
-#ifdef CONFIG_TI_CCFG_PRESENT
-    FLASH_CCFG            (rwx): ORIGIN = CCFG_ADDR, LENGTH = CCFG_SIZE
-#endif
-#ifdef DT_CCM_BASE_ADDRESS
-    CCM                   (rw) : ORIGIN = DT_CCM_BASE_ADDRESS, LENGTH = DT_CCM_SIZE * 1K
-#endif
     SRAM                  (wx) : ORIGIN = RAM_ADDR, LENGTH = RAM_SIZE
 
     /* Used by and documented in include/linker/intlist.ld */
@@ -129,23 +117,6 @@ SECTIONS
 
     SECTION_PROLOGUE(_TEXT_SECTION_NAME,,)
 	{
-#ifdef CONFIG_CC3220SF_DEBUG
-	/* Add CC3220SF flash header to disable flash verification */
-	. = 0x0;
-	KEEP(*(.dbghdr))
-	KEEP(*(".dbghdr.*"))
-#endif
-
-#ifdef CONFIG_NXP_IMX_RT_BOOT_HEADER
-	KEEP(*(.boot_hdr.conf))
-	. = CONFIG_IMAGE_VECTOR_TABLE_OFFSET;
-	KEEP(*(.boot_hdr.ivt))
-	KEEP(*(.boot_hdr.data))
-#ifdef CONFIG_DEVICE_CONFIGURATION_DATA
-	KEEP(*(.boot_hdr.dcd_data))
-#endif
-#endif
-
 	. = CONFIG_TEXT_SECTION_OFFSET;
 
 #if defined(CONFIG_SW_VECTOR_RELAY)
@@ -200,16 +171,6 @@ SECTIONS
 
 	_image_text_end = .;
 
-#if defined (CONFIG_CPLUSPLUS)
-	SECTION_PROLOGUE(.ARM.extab,,)
-	{
-	/*
-	 * .ARM.extab section containing exception unwinding information.
-	 */
-	*(.ARM.extab* .gnu.linkonce.armextab.*)
-	} GROUP_LINK_IN(ROMABLE_REGION)
-#endif
-
 	SECTION_PROLOGUE(.ARM.exidx,,)
 	{
 	/*
@@ -235,15 +196,6 @@ SECTIONS
 	*(".rodata.*")
 	*(.gnu.linkonce.r.*)
 
-#ifdef CONFIG_SOC_RODATA_LD
-#include <soc-rodata.ld>
-#endif
-
-#ifdef CONFIG_CUSTOM_RODATA_LD
-/* Located in project source directory */
-#include <custom-rodata.ld>
-#endif
-
 #include <linker/priv_stacks-rom.ld>
 #include <linker/kobject-rom.ld>
 
@@ -260,34 +212,10 @@ SECTIONS
 	. = ALIGN(4);
 	} GROUP_LINK_IN(ROMABLE_REGION)
 
-#if defined CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS
-#if CONFIG_ARM_NSC_REGION_BASE_ADDRESS != 0
-       SECTION_PROLOGUE(.gnu.sgstubs,CONFIG_ARM_NSC_REGION_BASE_ADDRESS,)
-#else
-       SECTION_PROLOGUE(.gnu.sgstubs,,)
-#endif /* CONFIG_ARM_NSC_REGION_BASE_ADDRESS != 0 */
-       {
-       . = ALIGN(4);
-       __sg_start = .;
-       *(.gnu*)
-       . = ALIGN(4);
-       __sg_end = .;
-       __sg_size = __sg_end - __sg_start;
-       } GROUP_LINK_IN(ROMABLE_REGION)
-#endif /* CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS */
-
 	_image_rodata_end = .;
 	_image_rom_end = .;
 
     GROUP_END(ROMABLE_REGION)
-
-/* Some TI SoCs have a special configuration footer, at the end of flash. */
-#ifdef CONFIG_TI_CCFG_PRESENT
-    SECTION_PROLOGUE(.ti_ccfg,,)
-    {
-    KEEP(*(TI_CCFG))
-    } > FLASH_CCFG
-#endif
 
     /*
      * These are here according to 'arm-zephyr-elf-ld --verbose',
@@ -308,16 +236,6 @@ SECTIONS
 	 */
 	. = ALIGN(_region_min_align);
 	_image_ram_start = .;
-
-#if defined(CONFIG_SOC_SERIES_STM32F0X) && !defined(CONFIG_IS_BOOTLOADER)
-    /* Must be first in ramable region */
-	SECTION_PROLOGUE(.st_stm32f0x_vt,(NOLOAD),)
-	{
-        _ram_vector_start = .;
-        . += _vector_end - _vector_start;
-        _ram_vector_end = .;
-	} GROUP_DATA_LINK_IN(RAMABLE_REGION, RAMABLE_REGION)
-#endif
 
 #if defined(CONFIG_SW_VECTOR_RELAY)
 	/* Reserved 4 bytes to save vector table base address */
@@ -355,20 +273,6 @@ SECTIONS
        __gcov_bss_size = __gcov_bss_end - __gcov_bss_start;
 
 #endif /* CONFIG_COVERAGE_GCOV */
-
-#if defined(CONFIG_NOCACHE_MEMORY)
-	/* Non-cached region of RAM */
-	SECTION_PROLOGUE(_NOCACHE_SECTION_NAME,(NOLOAD),)
-	{
-		MPU_ALIGN(_nocache_ram_size);
-		_nocache_ram_start = .;
-		*(.nocache)
-		*(".nocache.*")
-		MPU_ALIGN(_nocache_ram_size);
-		_nocache_ram_end = .;
-	} GROUP_LINK_IN(RAMABLE_REGION)
-	_nocache_ram_size = _nocache_ram_end - _nocache_ram_start;
-#endif /* CONFIG_NOCACHE_MEMORY */
 
 #if defined(CONFIG_ARCH_HAS_RAMFUNC_SUPPORT)
 	SECTION_DATA_PROLOGUE(.ramfunc,,)
@@ -426,10 +330,6 @@ SECTIONS
         *(".noinit.*")
 	*(".kernel_noinit.*")
 
-#ifdef CONFIG_SOC_NOINIT_LD
-#include <soc-noinit.ld>
-#endif
-
         } GROUP_LINK_IN(RAMABLE_REGION)
 
     SECTION_DATA_PROLOGUE(_DATA_SECTION_NAME,,)
@@ -438,15 +338,6 @@ SECTIONS
 	*(.data)
 	*(".data.*")
 	*(".kernel.*")
-
-#ifdef CONFIG_SOC_RWDATA_LD
-#include <soc-rwdata.ld>
-#endif
-
-#ifdef CONFIG_CUSTOM_RWDATA_LD
-/* Located in project source directory */
-#include <custom-rwdata.ld>
-#endif
 
 	} GROUP_DATA_LINK_IN(RAMABLE_REGION, ROMABLE_REGION)
 
@@ -470,50 +361,6 @@ SECTIONS
     __kernel_ram_size = __kernel_ram_end - __kernel_ram_start;
 
     GROUP_END(RAMABLE_REGION)
-
-#ifdef DT_CCM_BASE_ADDRESS
-
-    GROUP_START(CCM)
-
-	SECTION_PROLOGUE(_CCM_BSS_SECTION_NAME, (NOLOAD),SUBALIGN(4))
-	{
-		__ccm_start = .;
-		__ccm_bss_start = .;
-		*(.ccm_bss)
-		*(".ccm_bss.*")
-	} GROUP_LINK_IN(CCM)
-
-	__ccm_bss_end = .;
-
-	SECTION_PROLOGUE(_CCM_NOINIT_SECTION_NAME, (NOLOAD),SUBALIGN(4))
-	{
-		__ccm_noinit_start = .;
-		*(.ccm_noinit)
-		*(".ccm_noinit.*")
-	} GROUP_LINK_IN(CCM)
-
-	__ccm_noinit_end = .;
-
-	SECTION_PROLOGUE(_CCM_DATA_SECTION_NAME,,SUBALIGN(4))
-	{
-		__ccm_data_start = .;
-		*(.ccm_data)
-		*(".ccm_data.*")
-	} GROUP_LINK_IN(CCM AT> ROMABLE_REGION)
-
-	__ccm_data_end = .;
-	__ccm_end = .;
-
-	__ccm_data_rom_start = LOADADDR(_CCM_DATA_SECTION_NAME);
-
-    GROUP_END(CCM)
-
-#endif /* DT_CCM_BASE_ADDRESS */
-
-#ifdef CONFIG_CUSTOM_SECTIONS_LD
-/* Located in project source directory */
-#include <custom-sections.ld>
-#endif
 
 #ifdef CONFIG_GEN_ISR_TABLES
 #include <linker/intlist.ld>

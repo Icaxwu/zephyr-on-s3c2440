@@ -15,13 +15,11 @@
 #include <linker/sections.h>
 #include <arch/cpu.h>
 #include "vector_table.h"
+#include <soc.h>
 
 _ASM_FILE_PROLOGUE
 
 GTEXT(__reset)
-#if defined(CONFIG_PLATFORM_SPECIFIC_INIT)
-GTEXT(_PlatformInit)
-#endif
 
 /**
  *
@@ -56,27 +54,19 @@ SECTION_SUBSEC_FUNC(TEXT,_reset_section,__reset)
  */
 SECTION_SUBSEC_FUNC(TEXT,_reset_section,__start)
 
-    /* 如果当前从nor里启动，sram的映射地址是0x40001000
-       如果当前从nand里启动，sram的映射地址是0x1000
-     */
-    ldr sp, =0x40001000         
+    msr cpsr_c, #0xdf          /* 进入系统模式 */
+	ldr sp, =0x40000000+4096   /* 假设是nor启动, s3c2440的内置4Ksram隐射到0x40000000 */
 
-    ldr     r0, =0x53000000     @ WATCHDOG寄存器地址
-    mov     r1, #0x0                     
-    str     r1, [r0]            @ 写入0，禁止WATCHDOG，否则CPU会不断重启
 
-#if defined(CONFIG_PLATFORM_SPECIFIC_INIT)
     bl _PlatformInit
-#endif
 
-#ifdef CONFIG_WDOG_INIT
     /* board-specific watchdog initialization is necessary */
     bl _WdogInit
-#endif
 
+    bl _copy2sdram
     /*
      * 'bl' jumps the furthest of the branch instructions that are
      * supported on all platforms. So it is used when jumping to _PrepC
      * (even though we do not intend to return).
      */
-    bl _PrepC
+    ldr pc, =_PrepC

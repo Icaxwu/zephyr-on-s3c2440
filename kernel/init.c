@@ -482,10 +482,10 @@ FUNC_NORETURN void z_cstart(void)
 	if (IS_ENABLED(CONFIG_LOG)) {
 		log_core_init();
 	}
-
+	
 	/* perform any architecture-specific initialization */
 	kernel_arch_init();
-
+	
 #ifdef CONFIG_MULTITHREADING
 	struct k_thread dummy_thread = {
 		 .base.thread_state = _THREAD_DUMMY,
@@ -503,8 +503,15 @@ FUNC_NORETURN void z_cstart(void)
 
 	/* perform basic hardware initialization */
 	z_sys_device_do_config_level(_SYS_INIT_LEVEL_PRE_KERNEL_1);
-	z_sys_device_do_config_level(_SYS_INIT_LEVEL_PRE_KERNEL_2);
+	{
+	// 将LED1-3对应的GPF4/5/6三个引脚设为输出
+	(*(volatile unsigned long *)0x56000050) = (1<<(4*2))|(1<<(5*2))|(1<<(6*2));
 
+	(*(volatile unsigned long *)0x56000054) |= (7<<4);
+	(*(volatile unsigned long *)0x56000054) &= ~(1<<4);
+	while(1);
+	}
+	z_sys_device_do_config_level(_SYS_INIT_LEVEL_PRE_KERNEL_2);
 #ifdef CONFIG_STACK_CANARIES
 	__stack_chk_guard = z_early_boot_rand32_get();
 #endif

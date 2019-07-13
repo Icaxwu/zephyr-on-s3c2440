@@ -14,14 +14,21 @@
 #ifndef _SOC__H_
 #define _SOC__H_
 
+#include "s3c2440_soc.h"
+
 #ifndef _ASMLANGUAGE
 
-/* ARM CMSIS definitions must be included before kernel_includes.h.
- * Therefore, it is essential to include kernel_includes.h after including
- * core SOC-specific headers.
- */
-#include <kernel_includes.h>
 
+void _WdogInit(void);
+void _PlatformInit(void);
+void _copy2sdram(void);
+
+#else
+	
+GTEXT(_WdogInit)
+GTEXT(_PlatformInit)
+GTEXT(_copy2sdram)
 #endif /* !_ASMLANGUAGE */
+
 
 #endif /* _SOC__H_ */
