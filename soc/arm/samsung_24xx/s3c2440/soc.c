@@ -70,7 +70,7 @@ void _copy2sdram(void)
 	extern unsigned int _flash_used;
 
 	volatile unsigned int *dest = (volatile unsigned int *)&_image_rom_start;
-	volatile unsigned int *end = (volatile unsigned int *)((volatile unsigned char *)&_image_rom_start + _flash_used);
+	volatile unsigned int *end = (volatile unsigned int *)((volatile unsigned char *)&_image_rom_start + (unsigned int)&_flash_used);
 	volatile unsigned int *src = (volatile unsigned int *)0;
 
 	while (dest < end)

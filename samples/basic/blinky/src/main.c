@@ -14,8 +14,14 @@
 /* 1000 msec = 1 sec */
 #define SLEEP_TIME 	1000
 
+void  wait(volatile unsigned long dly)
+{
+	for(; dly > 0; dly--);
+}
+
 void main(void)
 {
+	#if 0
 	int cnt = 0;
 	struct device *dev;
 
@@ -29,4 +35,19 @@ void main(void)
 		cnt++;
 		k_sleep(SLEEP_TIME);
 	}
+	#else
+
+	uint32_t i = 0;
+
+	// 将LED1-3对应的GPF4/5/6三个引脚设为输出
+	(*(volatile unsigned long *)0x56000050) = (1<<(4*2))|(1<<(5*2))|(1<<(6*2));
+
+	while(1){
+		wait(30000);
+		(*(volatile unsigned long *)0x56000054) = ~(i<<4);
+		if(++i == 8)
+			i = 0;
+	}
+	
+	#endif
 }

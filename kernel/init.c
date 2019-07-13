@@ -238,7 +238,6 @@ static void bg_thread_main(void *unused1, void *unused2, void *unused3)
 #else
 	static const unsigned int boot_delay;
 #endif
-
 	z_sys_device_do_config_level(_SYS_INIT_LEVEL_POST_KERNEL);
 #if CONFIG_STACK_POINTER_RANDOM
 	z_stack_adjust_initialized = 1;
@@ -252,7 +251,6 @@ static void bg_thread_main(void *unused1, void *unused2, void *unused3)
 
 	/* Final init level before app starts */
 	z_sys_device_do_config_level(_SYS_INIT_LEVEL_APPLICATION);
-
 #ifdef CONFIG_CPLUSPLUS
 	/* Process the .ctors and .init_array sections */
 	extern void __do_global_ctors_aux(void);
@@ -275,7 +273,7 @@ static void bg_thread_main(void *unused1, void *unused2, void *unused3)
 #endif
 
 	extern void main(void);
-
+	
 	main();
 
 	/* Dump coverage data once the main() has exited. */
@@ -503,14 +501,6 @@ FUNC_NORETURN void z_cstart(void)
 
 	/* perform basic hardware initialization */
 	z_sys_device_do_config_level(_SYS_INIT_LEVEL_PRE_KERNEL_1);
-	{
-	// 将LED1-3对应的GPF4/5/6三个引脚设为输出
-	(*(volatile unsigned long *)0x56000050) = (1<<(4*2))|(1<<(5*2))|(1<<(6*2));
-
-	(*(volatile unsigned long *)0x56000054) |= (7<<4);
-	(*(volatile unsigned long *)0x56000054) &= ~(1<<4);
-	while(1);
-	}
 	z_sys_device_do_config_level(_SYS_INIT_LEVEL_PRE_KERNEL_2);
 #ifdef CONFIG_STACK_CANARIES
 	__stack_chk_guard = z_early_boot_rand32_get();
