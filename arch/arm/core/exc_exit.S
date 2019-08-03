@@ -66,6 +66,9 @@ SECTION_SUBSEC_FUNC(TEXT, _HandlerModeExit, _IntExit)
  */
 
 SECTION_SUBSEC_FUNC(TEXT, _HandlerModeExit, z_ExcExit)
+#if defined(CONFIG_ARMV4T)
+    bx lr
+#else
 
 #ifdef CONFIG_PREEMPT_ENABLED
     ldr r0, =_kernel
@@ -97,3 +100,5 @@ _EXIT_EXC:
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */
 #endif /* CONFIG_STACK_SENTINEL */
     bx lr
+
+#endif

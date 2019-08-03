@@ -1,0 +1,4 @@
+__pycache__
+.vscode/
+build
+build_nrf

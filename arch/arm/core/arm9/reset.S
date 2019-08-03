@@ -54,7 +54,7 @@ SECTION_SUBSEC_FUNC(TEXT,_reset_section,__reset)
  */
 SECTION_SUBSEC_FUNC(TEXT,_reset_section,__start)
 
-    msr cpsr_c, #0xdf          /* 进入系统模式 */
+    msr cpsr_c, #0xd3          /* 进入svc模式，屏蔽irq和frq */
 	ldr sp, =0x40000000+4096   /* 假设是nor启动, s3c2440的内置4Ksram隐射到0x40000000 */
 
 
@@ -64,6 +64,19 @@ SECTION_SUBSEC_FUNC(TEXT,_reset_section,__start)
     bl _WdogInit
 
     bl _copy2sdram
+
+    msr cpsr_c, #0xd2       @ 进入中断模式
+    ldr sp, =0x30200000     @ 设置中断模式栈指针
+
+	msr cpsr_c, #0xd7       @ 进入数据访问终止模式
+    ldr sp, =0x30201000     @ 设置数据访问终止模式栈指针
+
+	msr cpsr_c, #0xdb       @ 进入未定义指令中止模式
+    ldr sp, =0x30202000     @ 设置未定义指令中止模式栈指针
+
+	msr cpsr_c, #0xd3		@ 进入管理模式设置I-bit=1，关IRQ中断
+    ldr sp, =0x30203000     @ 设置管理模式栈指针
+	//ldr fp, =0x33f00000     @ 设置栈帧指针
     /*
      * 'bl' jumps the furthest of the branch instructions that are
      * supported on all platforms. So it is used when jumping to _PrepC

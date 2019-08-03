@@ -151,10 +151,12 @@ void idle(void *unused1, void *unused2, void *unused3)
 	}
 #else
 	for (;;) {
+	#if 0
 		(void)irq_lock();
 		sys_power_save_idle();
 
 		IDLE_YIELD_IF_COOP();
+	#endif
 	}
 #endif
 }

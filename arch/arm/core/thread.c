@@ -144,7 +144,45 @@ void z_new_thread(struct k_thread *thread, k_thread_stack_t *stack,
 	 * irrelevant.
 	 */
 #elif defined(CONFIG_CPU_ARM9)
-	
+	char *pStackMem = Z_THREAD_STACK_BUFFER(stack);
+	char *stackEnd;
+	/* Offset between the top of stack and the high end of stack area. */
+	u32_t top_of_stack_offset = 0U;
+
+	Z_ASSERT_VALID_PRIO(priority, pEntry);
+
+	stackEnd = pStackMem + stackSize;
+
+	struct __esf *pInitCtx;
+
+	z_new_thread_init(thread, pStackMem, stackSize, priority,
+			 options);
+
+	/* carve the thread entry struct from the "base" of the stack */
+	pInitCtx = (struct __esf *)(STACK_ROUND_DOWN(stackEnd -
+		(char *)top_of_stack_offset - sizeof(struct __esf)));
+
+	pInitCtx->pc = (u32_t)z_thread_entry;
+
+	/* force ARM mode by clearing LSB of address */
+	pInitCtx->pc &= 0xfffffffe;
+
+	pInitCtx->r0 = (u32_t)pEntry;
+	pInitCtx->r1 = (u32_t)parameter1;
+	pInitCtx->r2 = (u32_t)parameter2;
+	pInitCtx->r3 = (u32_t)parameter3;
+
+	thread->callee_saved.r0 = (u32_t)pEntry;
+	thread->callee_saved.r1 = (u32_t)parameter1;
+	thread->callee_saved.r2 = (u32_t)parameter2;
+	thread->callee_saved.r3 = (u32_t)parameter3;
+	thread->callee_saved.lr = z_thread_entry;
+
+	thread->callee_saved.pc = z_thread_entry;
+	/* enbale irq, disable fiq, svc mode*/
+	thread->callee_saved.cpsr = 0x53;
+	thread->callee_saved.sp = (u32_t)stackEnd & 0xfffffffc;
+	thread->arch.basepri = 0;
 #endif
 }
 

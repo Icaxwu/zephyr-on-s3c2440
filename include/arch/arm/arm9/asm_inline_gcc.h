@@ -138,7 +138,16 @@ static ALWAYS_INLINE unsigned int z_arch_irq_lock(void)
 		: "i"(_EXC_IRQ_DEFAULT_PRIO)
 		: "memory");
 #elif defined(CONFIG_ARMV4T)
-
+	unsigned int temp;
+	
+	__asm__ volatile(
+		"	mrs	%0, cpsr       \n"
+		"	orr	%1, %0, #0x80  \n"
+		"	msr	cpsr_c, %1"     //其它域不变
+		: "=r" (key), "=r" (temp)
+		:
+		: "memory", "cc");
+	return key;
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */
@@ -182,7 +191,11 @@ static ALWAYS_INLINE void z_arch_irq_unlock(unsigned int key)
 		"isb;"
 		:  : "r"(key) : "memory");
 #elif defined(CONFIG_ARMV4T)
-
+	__asm__ volatile(
+		"	msr	cpsr_c, %0	@ local_irq_restore"//其它域不变
+		:
+		: "r" (key)
+		: "memory", "cc");
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */

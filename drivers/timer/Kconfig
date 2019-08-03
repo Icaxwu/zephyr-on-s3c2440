@@ -177,6 +177,14 @@ config SAM0_RTC_TIMER
 	  series Real Time Counter and provides the standard "system clock
 	  driver" interfaces.
 
+config S3C2440_TIMER
+	bool "samsung s3c24xx series RTC timer"
+	depends on SOC_FAMILY_S3C24XX
+	help
+	  This module implements a kernel device driver for the samsung s3c24xx
+	  series Real Time Counter and provides the standard "system clock
+	  driver" interfaces.
+
 config SYSTEM_CLOCK_DISABLE
 	bool "API to disable system clock"
 	help

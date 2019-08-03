@@ -36,6 +36,7 @@
 
 #ifdef CONFIG_CPU_ARM9
 #include <arch/arm/arm9/exc.h>
+#include <arch/arm/arm9/irq.h>
 #include <arch/arm/arm9/error.h>
 #include <arch/arm/arm9/asm_inline.h>
 #endif

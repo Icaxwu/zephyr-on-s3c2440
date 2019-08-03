@@ -39,6 +39,9 @@ struct _caller_saved {
 	 * u32_t pc;       r15
 	 * u32_t xpsr;
 	 */
+#if defined(CONFIG_CPU_ARM9)
+
+#endif
 };
 
 typedef struct _caller_saved _caller_saved_t;
@@ -54,6 +57,24 @@ struct _callee_saved {
 	u32_t v7;  /* r10 */
 	u32_t v8;  /* r11 */
 	u32_t psp; /* r13 */
+#elif defined(CONFIG_CPU_ARM9)
+	u32_t r0;  
+	u32_t r1;  
+	u32_t r2;  
+	u32_t r3; 
+	u32_t r4;  
+	u32_t r5;  
+	u32_t r6;  
+	u32_t r7; 
+	u32_t r8;  
+	u32_t r9;  
+	u32_t r10;  
+	u32_t r11; 
+	u32_t r12;
+	u32_t sp;    /* r13 */
+	u32_t lr;	 /* r14 */
+	u32_t pc;    /* r15 */
+	u32_t cpsr;
 #endif
 };
 

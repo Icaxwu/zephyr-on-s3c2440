@@ -45,6 +45,20 @@ extern const int _k_neg_eagain;
  * z_set_thread_return_value()
  *
  */
+#if defined(CONFIG_CPU_ARM9)
+int __swap(int key)
+{
+	/* store return value */
+	_current->arch.swap_return_value = _k_neg_eagain;
+
+	__do_swap();
+
+	/* Context switch is performed here. Returning implies the
+	 * thread has been context-switched-in again.
+	 */
+	return _current->arch.swap_return_value;
+}
+#else
 int __swap(int key)
 {
 #ifdef CONFIG_EXECUTION_BENCHMARKING
@@ -58,8 +72,6 @@ int __swap(int key)
 #if defined(CONFIG_CPU_CORTEX_M)	
 	/* set pending bit to make sure we will take a PendSV exception */
 	SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
-#elif defined(CONFIG_CPU_ARM9)
-	
 #endif
 
 	/* clear mask or enable all irqs to take a pendsv */
@@ -69,4 +81,6 @@ int __swap(int key)
 	 * thread has been context-switched-in again.
 	 */
 	return _current->arch.swap_return_value;
+
 }
+#endif

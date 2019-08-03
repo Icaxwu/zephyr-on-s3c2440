@@ -50,6 +50,14 @@ extern volatile irq_offload_routine_t offload_routine;
  */
 static ALWAYS_INLINE bool z_IsInIsr(void)
 {
+#if defined(CONFIG_ARMV4T)
+	uint32_t result;
+
+	__asm volatile ("MRS %0, cpsr" : "=r" (result) );
+
+	result &= 0x1F;
+	return (result >= 0x11 && result <= 0x13);
+#else
 	u32_t vector = __get_IPSR();
 
 	/* IRQs + PendSV (14) + SYSTICK (15) are interrupts. */
@@ -76,11 +84,11 @@ static ALWAYS_INLINE bool z_IsInIsr(void)
 		 */
 		|| (vector && !(SCB->ICSR & SCB_ICSR_RETTOBASE_Msk))
 #endif /* CONFIG_BOARD_QEMU_CORTEX_M3 */
-#elif defined(CONFIG_ARMV4T)
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */
 		;
+#endif
 }
 
 /**

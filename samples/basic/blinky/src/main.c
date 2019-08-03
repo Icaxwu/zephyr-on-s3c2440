@@ -37,16 +37,17 @@ void main(void)
 	}
 	#else
 
-	uint32_t i = 0;
-
 	// 将LED1-3对应的GPF4/5/6三个引脚设为输出
 	(*(volatile unsigned long *)0x56000050) = (1<<(4*2))|(1<<(5*2))|(1<<(6*2));
+	// 默认全部关闭
+	(*(volatile unsigned long *)0x56000054) = (7<<4);
 
 	while(1){
-		wait(30000);
-		(*(volatile unsigned long *)0x56000054) = ~(i<<4);
-		if(++i == 8)
-			i = 0;
+		//wait(30000);
+		
+		(*(volatile unsigned long *)0x56000054) ^= (3<<4);
+
+		k_sleep(1000);
 	}
 	
 	#endif

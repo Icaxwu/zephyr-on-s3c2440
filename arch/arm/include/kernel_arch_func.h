@@ -104,7 +104,11 @@ z_arch_switch_to_main_thread(struct k_thread *main_thread,
 	 */
 	__asm__ volatile (
 	"mov   r0,  %0     \n\t"   /* Store _main in R0 */
+#if defined(CONFIG_ARMV4T)
+	"mov   r13, %1     \n\t"   /* SP */
+#else
 	"msr   PSP, %1     \n\t"   /* __set_PSP(start_of_main_stack) */
+#endif
 #if defined(CONFIG_ARMV6_M_ARMV8_M_BASELINE)
 	"cpsie i           \n\t"   /* __enable_irq() */
 #elif defined(CONFIG_ARMV7_M_ARMV8_M_MAINLINE)
@@ -112,12 +116,13 @@ z_arch_switch_to_main_thread(struct k_thread *main_thread,
 	"mov   r1,  #0     \n\t"
 	"msr   BASEPRI, r1 \n\t"   /* __set_BASEPRI(0) */
 #elif defined(CONFIG_ARMV4T)
-	// todo
-#elif defined(CONFIG_ARMV4T)
+	"msr cpsr, #0x53   \n\t"       /* enbale irq, disable fiq, svc mode*/
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */
+#if !defined(CONFIG_ARMV4T)
 	"isb               \n\t"
+#endif
 	"movs r1, #0       \n\t"
 	"movs r2, #0       \n\t"
 	"movs r3, #0       \n\t"

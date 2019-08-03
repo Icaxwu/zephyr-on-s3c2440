@@ -24,7 +24,7 @@
 #include <irq.h>
 #include <kernel_structs.h>
 #include <tracing.h>
-
+#include <soc.h>
 extern void __reserved(void);
 
 #define NUM_IRQS_PER_REG 32
@@ -45,7 +45,7 @@ void z_arch_irq_enable(unsigned int irq)
 #if defined(CONFIG_CPU_CORTEX_M)	
 	NVIC_EnableIRQ((IRQn_Type)irq);
 #elif defined(CONFIG_CPU_ARM9)
-	
+	INTMSK &= ~(1<<irq);  
 #endif
 }
 
@@ -63,7 +63,7 @@ void z_arch_irq_disable(unsigned int irq)
 #if defined(CONFIG_CPU_CORTEX_M)	
 	NVIC_DisableIRQ((IRQn_Type)irq);
 #elif defined(CONFIG_CPU_ARM9)
-	
+	INTMSK |= (1<<irq);  
 #endif
 }
 
@@ -78,7 +78,7 @@ int z_arch_irq_is_enabled(unsigned int irq)
 #if defined(CONFIG_CPU_CORTEX_M)	
 	return NVIC->ISER[REG_FROM_IRQ(irq)] & BIT(BIT_FROM_IRQ(irq));
 #elif defined(CONFIG_CPU_ARM9)
-	return 0;
+	return !(INTMSK & (1<<irq));
 #endif
 }
 

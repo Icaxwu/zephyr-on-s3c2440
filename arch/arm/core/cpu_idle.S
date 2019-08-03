@@ -118,7 +118,7 @@ SECTION_FUNC(TEXT, _NanoIdleValClear)
 
 SECTION_FUNC(TEXT, k_cpu_idle)
 #if defined(CONFIG_ARMV4T)
-
+	bx lr
 #else
 #ifdef CONFIG_TRACING
 	push {r0, lr}

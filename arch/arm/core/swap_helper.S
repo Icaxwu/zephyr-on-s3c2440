@@ -19,6 +19,67 @@
 #include <syscall.h>
 
 _ASM_FILE_PROLOGUE
+#if defined(CONFIG_ARMV4T)
+
+GTEXT(__handleSWI)
+GTEXT(__do_swap)
+
+SECTION_FUNC(TEXT, __handleSWI)
+    stmdb sp!, { r0-r12,r14 }   @ 保存使用到的寄存器
+    LDR   r10, [r14, #-4]
+    BIC   r10, r10, #0xFF000000
+    MOV   r1,  r13
+    MRS   r2,  spsr             // 如果会发生swi嵌套，则需要此步骤？ 
+    STMFD r13!, {r2}
+    BL    swi_jumptable
+    LDMFD r13!, {r2}
+    MSR   spsr, r2
+    ldmia   sp!,    { r0-r12,pc }^  @ 中断返回, ^表示将spsr的值复制到cpsr
+swi_jumptable:
+    MOV r0, r10
+    B eventsSWIHandler
+
+
+SECTION_FUNC(TEXT, __do_swap)
+	stmdb	SP, {r0-r3}
+    /* load _kernel into r1 and current k_thread into r2 */
+    ldr r1, =_kernel
+    ldr r2, [r1, #_kernel_offset_to_current]
+
+
+    /* addr of callee-saved regs in thread in r0 */
+    ldr r0, =_thread_offset_to_callee_saved
+    add r0, r2
+    add r0, #16   // reserved for r0 ~ r3
+	/* 
+		Store current r4-r12, sp, lr, pc, cpsr.
+		当前lr就是等于__do_swap执行完毕后的return address，__do_swap的上一级函数的return address
+		由上一级函数自己保持到栈里，__do_swap不需要关心。
+	*/
+    STMIA   r0!, {r4-r12, sp, lr}
+    STMIA   r0!, {lr}           // pc
+	MRS		r3,  CPSR		
+	STMIA	r0!, {r3}
+
+    /* Store current r0-r3*/
+    ldr r4, =_thread_offset_to_callee_saved
+    add r4, r2
+	LDMDB sp, {r0-r3}
+    STMIA r4, {r0-r3}
+
+	ldr r0, =_kernel
+	ldr r1, [r0, #_kernel_offset_to_ready_q_cache]
+    str r1, [r0, #_kernel_offset_to_current]
+
+	ldr r2, =_thread_offset_to_callee_saved
+    adds r2, r1 
+	
+    ldr r3, [r2, #16*4]   // offset of cpsr: 16*4
+    msr cpsr, r3
+
+    /* restore current r0-r12, sp, LR, pc, CPSR*/
+    ldmia r2, {r0-r12, sp, lr, pc} 
+#else
 
 GTEXT(__svc)
 GTEXT(__pendsv)
@@ -42,9 +103,6 @@ GDATA(_kernel)
  */
 
 SECTION_FUNC(TEXT, __pendsv)
-#if defined(CONFIG_ARMV4T)
-
-#else
 
 #ifdef CONFIG_TRACING
     /* Register the context switch */
@@ -260,7 +318,7 @@ _thread_irq_disabled:
 
     /* exc return */
     bx lr
-#endif
+
 #if defined(CONFIG_ARMV6_M_ARMV8_M_BASELINE)
 
 /**
@@ -443,11 +501,8 @@ valid_syscall_id:
     /* return from SVC to the modified LR - z_arm_do_syscall */
     bx lr
 #endif
-
-#elif defined(CONFIG_ARMV4T)
-
-
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */
 
+#endif
