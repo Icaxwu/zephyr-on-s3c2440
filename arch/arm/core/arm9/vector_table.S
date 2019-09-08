@@ -91,10 +91,12 @@ HandleIRQ:
     STMIA   r0!, {r4-r12}
     MRS		r3, CPSR
 	MSR     CPSR, #0xd3			// Change to SVC mode, disable irq,fiq
-    STMIA   r0!, {sp, lr}       // TASK'S SP, LR
+    STMIA   r0!, {lr}           // TASK'S LR
+    mov     r4,  sp             
     MSR		CPSR, r3		    // BACK TO IRQ MODE
     SUB     R3,   LR, #4
     STMIA	r0!, {R3}           // TASK'S PC
+    STMIA	r0!, {R4}           // TASK'S sp 
     MRS		r3,  spsr		
 	STMIA	r0!, {r3}           // TASK'S CPSR
 
@@ -121,8 +123,12 @@ HandleIRQ:
 	ldr r2, =_thread_offset_to_callee_saved
     adds r2, r1 
 
+    ldr r3, [r2, #15*4]   // offset of sp: 15*4
+	MSR     CPSR, #0xd3	  // Change to SVC mode, disable irq,fiq
+    mov     sp, r3        // restore sp
     ldr r3, [r2, #16*4]   // offset of cpsr: 16*4
     msr spsr, r3
 
-    ldmia r2, {r0-r12, sp, lr, pc}^ 
+    /* restore r0-r12, lr, pc */
+    ldmia r2, {r0-r12, lr, pc}^ 
 #endif

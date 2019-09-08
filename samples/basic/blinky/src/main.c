@@ -45,8 +45,8 @@ void main(void)
 	while(1){
 		//wait(30000);
 		
-		(*(volatile unsigned long *)0x56000054) ^= (3<<4);
-
+		(*(volatile unsigned long *)0x56000054) ^= (2<<4);
+		//(*(volatile unsigned long *)0x56000054) &= ~(4<<4);
 		k_sleep(1000);
 	}
 	

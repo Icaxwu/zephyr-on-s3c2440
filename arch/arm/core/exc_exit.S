@@ -66,7 +66,22 @@ SECTION_SUBSEC_FUNC(TEXT, _HandlerModeExit, _IntExit)
  */
 
 SECTION_SUBSEC_FUNC(TEXT, _HandlerModeExit, z_ExcExit)
+
 #if defined(CONFIG_ARMV4T)
+
+#ifdef CONFIG_PREEMPT_ENABLED
+    ldr r0, =_kernel
+
+    ldr r1, [r0, #_kernel_offset_to_current]
+
+    ldr r2, [r0, #_kernel_offset_to_ready_q_cache]
+    cmp r2, r1
+    beq _EXIT_EXC
+    /* ready_q_cache = current, 上下文的切换在中断退出时来做 */
+    str r2, [r0, #_kernel_offset_to_current]
+
+_EXIT_EXC:
+#endif /* CONFIG_PREEMPT_ENABLED */
     bx lr
 #else
 

@@ -71,9 +71,9 @@ struct _callee_saved {
 	u32_t r10;  
 	u32_t r11; 
 	u32_t r12;
-	u32_t sp;    /* r13 */
 	u32_t lr;	 /* r14 */
 	u32_t pc;    /* r15 */
+	u32_t sp;    /* r13 */
 	u32_t cpsr;
 #endif
 };

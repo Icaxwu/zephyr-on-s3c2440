@@ -42,6 +42,7 @@ swi_jumptable:
 
 SECTION_FUNC(TEXT, __do_swap)
 	stmdb	SP, {r0-r3}
+    MRS		r3,  CPSR
     /* load _kernel into r1 and current k_thread into r2 */
     ldr r1, =_kernel
     ldr r2, [r1, #_kernel_offset_to_current]
@@ -56,10 +57,10 @@ SECTION_FUNC(TEXT, __do_swap)
 		当前lr就是等于__do_swap执行完毕后的return address，__do_swap的上一级函数的return address
 		由上一级函数自己保持到栈里，__do_swap不需要关心。
 	*/
-    STMIA   r0!, {r4-r12, sp, lr}
-    STMIA   r0!, {lr}           // pc
-	MRS		r3,  CPSR		
-	STMIA	r0!, {r3}
+    STMIA   r0!, {r4-r12, lr}
+    STMIA   r0!, {lr}           // pc	
+    STMIA   r0!, {sp}           // sp		
+	STMIA	r0!, {r3}           // cpsr
 
     /* Store current r0-r3*/
     ldr r4, =_thread_offset_to_callee_saved
@@ -77,8 +78,11 @@ SECTION_FUNC(TEXT, __do_swap)
     ldr r3, [r2, #16*4]   // offset of cpsr: 16*4
     msr cpsr, r3
 
+    ldr r3, [r2, #15*4]   // offset of sp: 15*4
+    mov sp, r3
+
     /* restore current r0-r12, sp, LR, pc, CPSR*/
-    ldmia r2, {r0-r12, sp, lr, pc} 
+    ldmia r2, {r0-r12, lr, pc} 
 #else
 
 GTEXT(__svc)
