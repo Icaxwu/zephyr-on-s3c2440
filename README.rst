@@ -1,18 +1,11 @@
 
-.. raw:: html
+just for fun
+-------------    
+移植zephyr到s3c2440上。s3c2240属于armvt4架构，可能由于年代久远，不在zephyr官方支持的arch类型中。
+手中刚好有一块100ask的jz2440开发板，用来玩zephyr，不用担心任何资源问题，cpu够快、内存够大。
 
-   <a href="https://www.zephyrproject.org">
-     <p align="center">
-       <img src="doc/images/Zephyr-Project.png">
-     </p>
-   </a>
-
-   <a href="https://bestpractices.coreinfrastructure.org/projects/74"><img
-   src="https://bestpractices.coreinfrastructure.org/projects/74/badge"></a>
-   <img
-   src="https://api.shippable.com/projects/58ffb2b8baa5e307002e1d79/badge?branch=master">
-
-
+更多关于zephyr信息
+--------------------------
 The Zephyr Project is a scalable real-time operating system (RTOS) supporting
 multiple hardware architectures, optimized for resource constrained devices,
 and built with security in mind.
