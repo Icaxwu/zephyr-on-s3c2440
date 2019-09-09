@@ -11,7 +11,7 @@ static u32_t last_count;
 
 void clock_isr(void *arg)
 {
-	(*(volatile unsigned long *)0x56000054) ^= (4<<4);
+	//(*(volatile unsigned long *)0x56000054) ^= (4<<4);
 	z_clock_announce(1);
 }
 
@@ -19,7 +19,7 @@ int z_clock_driver_init(struct device *device)
 {
 	ARG_UNUSED(device);
 
-	/* 设置TIMER0的时钟 */
+	/* 设置TIMER0的时�?*/
 	/* Timer clk = PCLK / {prescaler value+1} / {divider value} 
 	             = 50000000/(99+1)/16
 	             = 31250
@@ -28,10 +28,10 @@ int z_clock_driver_init(struct device *device)
 	TCFG1 &= ~0xf;
 	TCFG1 |= 3;  /* MUX0 : 1/16 */
 
-	/* 设置TIMER0的初值 */
-	TCNTB0 = 312;  /* 10ms中断一次 */
+	/* 设置TIMER0的初�?*/
+	TCNTB0 = 312;  /* 10ms中断一�?*/
 
-	/* 加载初值, 启动timer0 */
+	/* 加载初�? 启动timer0 */
 	TCON |= (1<<1);   /* Update from TCNTB0 & TCMPB0 */
 
 	/* 设置为自动加载并启动 */
