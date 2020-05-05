@@ -1,0 +1,14 @@
+
+menuconfig UART_S3C2440
+    bool "S3C2440 MCU serial driver"
+	select SERIAL_HAS_DRIVER
+	depends on SOC_SERIES_S3C2440
+	help
+	  This option enables the UART driver for S3C2440 family of
+	  processors.
+
+config UART_0_S3C2440_UART
+	bool "S3C2440 UART 0"
+    depends on UART_S3C2440
+	help
+	    Enable S3C2440 UART.

@@ -54,8 +54,8 @@ SECTION_SUBSEC_FUNC(TEXT,_reset_section,__reset)
  */
 SECTION_SUBSEC_FUNC(TEXT,_reset_section,__start)
 
-    msr cpsr_c, #0xd3          /* ½øÈësvcÄ£Ê½£¬ÆÁ±ÎirqºÍfrq */
-	ldr sp, =0x40000000+4096   /* ¼ÙÉèÊÇnorÆô¶¯, s3c2440µÄÄÚÖÃ4KsramÒşÉäµ½0x40000000 */
+    msr cpsr_c, #0xd3          /* è¿›å…¥svcæ¨¡å¼ï¼Œå±è”½irqå’Œfrq */
+	ldr sp, =0x40000000+4096   /* å‡è®¾æ˜¯norå¯åŠ¨, s3c2440çš„å†…ç½®4Ksraméšå°„åˆ°0x40000000 */
 
 
     bl _PlatformInit
@@ -65,18 +65,18 @@ SECTION_SUBSEC_FUNC(TEXT,_reset_section,__start)
 
     bl _copy2sdram
 
-    msr cpsr_c, #0xd2       @ ½øÈëÖĞ¶ÏÄ£Ê½
-    ldr sp, =0x30200000     @ ÉèÖÃÖĞ¶ÏÄ£Ê½Õ»Ö¸Õë
+    msr cpsr_c, #0xd2       @ è¿›å…¥ä¸­æ–­æ¨¡å¼
+    ldr sp, =0x30200000     @ è®¾ç½®ä¸­æ–­æ¨¡å¼æ ˆæŒ‡é’ˆ
 
-	msr cpsr_c, #0xd7       @ ½øÈëÊı¾İ·ÃÎÊÖÕÖ¹Ä£Ê½
-    ldr sp, =0x30201000     @ ÉèÖÃÊı¾İ·ÃÎÊÖÕÖ¹Ä£Ê½Õ»Ö¸Õë
+	msr cpsr_c, #0xd7       @ è¿›å…¥æ•°æ®è®¿é—®ç»ˆæ­¢æ¨¡å¼
+    ldr sp, =0x30201000     @ è®¾ç½®æ•°æ®è®¿é—®ç»ˆæ­¢æ¨¡å¼æ ˆæŒ‡é’ˆ
 
-	msr cpsr_c, #0xdb       @ ½øÈëÎ´¶¨ÒåÖ¸ÁîÖĞÖ¹Ä£Ê½
-    ldr sp, =0x30202000     @ ÉèÖÃÎ´¶¨ÒåÖ¸ÁîÖĞÖ¹Ä£Ê½Õ»Ö¸Õë
+	msr cpsr_c, #0xdb       @ è¿›å…¥æœªå®šä¹‰æŒ‡ä»¤ä¸­æ­¢æ¨¡å¼
+    ldr sp, =0x30202000     @ è®¾ç½®æœªå®šä¹‰æŒ‡ä»¤ä¸­æ­¢æ¨¡å¼æ ˆæŒ‡é’ˆ
 
-	msr cpsr_c, #0xd3		@ ½øÈë¹ÜÀíÄ£Ê½ÉèÖÃI-bit=1£¬¹ØIRQÖĞ¶Ï
-    ldr sp, =0x30203000     @ ÉèÖÃ¹ÜÀíÄ£Ê½Õ»Ö¸Õë
-	//ldr fp, =0x33f00000     @ ÉèÖÃÕ»Ö¡Ö¸Õë
+	msr cpsr_c, #0xd3		@ è¿›å…¥ç®¡ç†æ¨¡å¼è®¾ç½®I-bit=1ï¼Œå…³IRQä¸­æ–­
+    ldr sp, =0x30203000     @ è®¾ç½®ç®¡ç†æ¨¡å¼æ ˆæŒ‡é’ˆ
+	//ldr fp, =0x33f00000     @ è®¾ç½®æ ˆå¸§æŒ‡é’ˆ
     /*
      * 'bl' jumps the furthest of the branch instructions that are
      * supported on all platforms. So it is used when jumping to _PrepC
