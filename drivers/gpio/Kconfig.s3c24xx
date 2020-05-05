@@ -1,6 +1,31 @@
-config GPIO_S3C24XX
-	bool "s3c24xx GPIO driver"
+# Copyright (c) 2018 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig GPIO_S3C24XX
+	bool "S3C24XX GPIO driver"
 	default y
 	depends on SOC_FAMILY_S3C24XX
+	select HAS_DTS_GPIO
 	help
-	  Enable GPIO driver for s3c24xx soc.
+	  Enable GPIO driver for S3C24XX line of MCUs.
+
+if GPIO_S3C24XX
+
+config GPIO_S3C24XX_INIT_PRIORITY
+	int "S3C24XX GPIO initialization priority"
+	default 40
+	help
+	  Initialization priority for S3C24XX GPIO.
+
+config GPIO_S3C24XX_PF
+	bool "S3C24XX GPIO Port PF"
+	depends on HAS_HW_S3C24XX_GPIOF
+	default y
+	help
+	  Enable S3C24XX GPIO port PF config options.
+
+
+endif # GPIO_S3C24XX
+

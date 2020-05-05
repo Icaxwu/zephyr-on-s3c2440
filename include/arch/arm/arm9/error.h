@@ -66,6 +66,10 @@ extern void z_SysFatalErrorHandler(unsigned int reason, const NANO_ESF *esf);
 	CODE_UNREACHABLE; \
 } while (false)
 #elif defined(CONFIG_ARMV4T)
+#define Z_ARCH_EXCEPT(reason_p) do { \
+		CODE_UNREACHABLE; \
+	} while (false)
+
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */

@@ -9,5 +9,6 @@ config SOC_SERIES_S3C2440
 	bool "SAMSUNG S3C2440 series SOC"
 	select SOC_FAMILY_S3C24XX
 	select CPU_ARM920T
+	select HAS_HW_S3C24XX_GPIOF
 	help
 	  Enable support for Samsung s3c2440 soc series

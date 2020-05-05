@@ -15,5 +15,6 @@ config SOC_FAMILY
 	default "samsung_24xx"
 	
 source "soc/arm/samsung_24xx/*/Kconfig.soc"	
+source "soc/arm/samsung_24xx/Kconfig.peripherals"
 
 endif # SOC_FAMILY_S3C24XX

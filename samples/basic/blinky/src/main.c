@@ -32,18 +32,34 @@ void  wait(volatile unsigned long dly)
 
 void test_thread_loop1(void *p1, void *p2, void *p3)
 {
+	struct device *dev;
+
+	dev = device_get_binding(LED1_GPIO_CONTROLLER);
+	/* Set LED pin as output */
+	gpio_pin_configure(dev, LED1_GPIO_PIN, GPIO_DIR_OUT);
+	
 	while(1)
 	{
-		(*(volatile unsigned long *)0x56000054) ^= (2<<4);
+		gpio_pin_write(dev, LED1_GPIO_PIN, 1);
+		k_sleep(500);
+		gpio_pin_write(dev, LED1_GPIO_PIN, 0);
 		k_sleep(500);
 	}
 }
 
 void test_thread_loop2(void *p1, void *p2, void *p3)
 {
+	struct device *dev;
+
+	dev = device_get_binding(LED0_GPIO_CONTROLLER);
+	/* Set LED pin as output */
+	gpio_pin_configure(dev, LED0_GPIO_PIN, GPIO_DIR_OUT);
+	
 	while(1)
 	{
-		(*(volatile unsigned long *)0x56000054) ^= (1<<4);
+		gpio_pin_write(dev, LED0_GPIO_PIN, 1);
+		k_sleep(1000);
+		gpio_pin_write(dev, LED0_GPIO_PIN, 0);
 		k_sleep(1000);
 	}
 }
@@ -75,14 +91,17 @@ void main(void)
 			TEST_THREAD2_STACK_SIZE, test_thread_loop2,
 			NULL, NULL, NULL,
 			TEST_THREAD2_PRIIO, 0, 0);
-	// 将LED1-3对应的GPF4/5/6三个引脚设为输出
-	(*(volatile unsigned long *)0x56000050) = (1<<(4*2))|(1<<(5*2))|(1<<(6*2));
-	// 默认全部关闭
-	(*(volatile unsigned long *)0x56000054) = (7<<4);
+
+	struct device *dev;
+
+	dev = device_get_binding(LED2_GPIO_CONTROLLER);
+	/* Set LED pin as output */
+	gpio_pin_configure(dev, LED2_GPIO_PIN, GPIO_DIR_OUT);
 
 	while(1){
-	
-		(*(volatile unsigned long *)0x56000054) ^= (4<<4);
+		gpio_pin_write(dev, LED2_GPIO_PIN, 1);
+		k_sleep(250);
+		gpio_pin_write(dev, LED2_GPIO_PIN, 0);
 		k_sleep(250);
 	}
 	

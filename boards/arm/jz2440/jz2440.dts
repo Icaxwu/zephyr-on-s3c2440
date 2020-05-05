@@ -15,19 +15,26 @@
 	aliases {
 		led0 = &led0;
 		led1 = &led1;
+		led2 = &led2;
 	};
 
 	leds {
 		compatible = "gpio-leds";
 		led0: led_0 {
-			gpios = <&gpio0 17 GPIO_INT_ACTIVE_LOW>;
-			label = "Green LED 0";
+			gpios = <&gpiof 4 GPIO_INT_ACTIVE_LOW>;
+			label = "Red LED 0";
+		};
+
+		led1: led_1 {
+			gpios = <&gpiof 5 GPIO_INT_ACTIVE_LOW>;
+			label = "Red LED 1";
+		};
+
+		led2: led_2 {
+			gpios = <&gpiof 6 GPIO_INT_ACTIVE_LOW>;
+			label = "Red LED 2";
 		};
 		
-		led1: led_1 {
-			gpios = <&gpio0 18 GPIO_INT_ACTIVE_LOW>;
-			label = "Green LED 1";
-		};
 	};
 	
 };

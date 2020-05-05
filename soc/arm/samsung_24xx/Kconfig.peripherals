@@ -1,0 +1,19 @@
+
+config HAS_HW_S3C24XX_ADC
+	bool
+
+config HAS_HW_S3C24XX_GPIOF
+	bool
+
+config HAS_HW_S3C24XX_I2S
+	bool
+	
+config HAS_HW_S3C24XX_SPI0
+	bool
+
+config HAS_HW_S3C24XX_TIMER0
+	bool
+
+
+config HAS_HW_S3C24XX_UART0
+	bool

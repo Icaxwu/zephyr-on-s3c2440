@@ -15,19 +15,19 @@
 	};
 
 	aliases {
-		gpio-0 = &gpio0;
+		gpio-f = &gpiof;
 	};
 	
 	soc {
 		#address-cells = <0x01>;
 		#size-cells = <0x01>;
 		
-		gpio0: gpio@50000000 {
-			compatible = "nordic,nrf-gpio";
+		gpiof: gpio@56000050 {
+			compatible = "samsung,s3c24xx-gpio";
 			gpio-controller;
-			reg = <0x50000000 0x1000>;
+			reg = <0x50000000 0x08>;
 			#gpio-cells = <2>;
-			label = "GPIO_0";
+			label = "GPIO_F";
 			status = "ok";
 		};
 	};
