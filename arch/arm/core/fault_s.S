@@ -132,7 +132,7 @@ _s_stack_frame_msp:
 _s_stack_frame_endif:
 #endif /* CONFIG_ARM_SECURE_FIRMWARE || CONFIG_ARM_NONSECURE_FIRMWARE */
 #elif defined(CONFIG_ARMV4T)
-
+    bl HandleNotUsed
 #else
 #error Unknown ARM architecture
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */

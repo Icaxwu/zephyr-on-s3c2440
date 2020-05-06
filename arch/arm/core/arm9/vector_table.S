@@ -23,6 +23,7 @@
 _ASM_FILE_PROLOGUE
 
 GTEXT(_isr_wrapper)
+GTEXT(HandleNotUsed)
 
 SECTION_SUBSEC_FUNC(exc_vector_table,_vector_table_section,_vector_table)
     b   __reset
@@ -44,8 +45,7 @@ HandleDataAbort:
     b   HandleDataAbort
 
 @ 0x14: 保留
-HandleNotUsed:
-    b   HandleNotUsed
+    ldr pc, = _HandleNotUsed
 
 @ 0x18: 中断模式的向量地址  
     ldr pc, = HandleIRQ
@@ -54,8 +54,7 @@ HandleNotUsed:
 HandleFIQ:
     b   HandleFIQ
 
-
-HandleIRQ:
+SECTION_SUBSEC_FUNC(exc_vector_table, _vector_func, HandleIRQ)
     /************************************
     先不考虑中断嵌套，直接保存环境到thread里
     ************************************/
@@ -69,7 +68,7 @@ HandleIRQ:
     add r0, r2
     add r0, #16   // reserved for r0 ~ r3
 
-    STMIA   r0!, {r4-r12}
+    STMIA   r0!, {r4-r12}       // r4-r12
     MRS		r3, CPSR
 	MSR     CPSR, #0xd3			// Change to SVC mode, disable irq,fiq
     STMIA   r0!, {lr}           // TASK'S LR
@@ -86,7 +85,7 @@ HandleIRQ:
     ldr r4, =_thread_offset_to_callee_saved
     add r4, r2
 
-	/* Store current r0-r3,LR*/
+	/* Store current r0-r3*/
 	LDMDB sp, {r0-r3}
     STMIA r4, {r0-r3}
 
@@ -112,3 +111,9 @@ HandleIRQ:
 
     /* restore r0-r12, lr, pc */
     ldmia r2, {r0-r12, lr, pc}^ 
+
+
+SECTION_SUBSEC_FUNC(exc_vector_table, _vector_func, _HandleNotUsed)
+
+    bl   HandleNotUsed    
+

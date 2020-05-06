@@ -127,7 +127,7 @@ void z_irq_priority_set(unsigned int irq, unsigned int prio, u32_t flags)
 #if defined(CONFIG_CPU_CORTEX_M)	
 	NVIC_SetPriority((IRQn_Type)irq, prio);
 #elif defined(CONFIG_CPU_ARM9)
-	
+	/* 当前对中断的处理不支持嵌套，所以也暂不支持优先级的设置 */
 #endif
 }
 

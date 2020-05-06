@@ -35,6 +35,7 @@ int z_clock_driver_init(struct device *device)
 	TCON &= ~(1<<1);
 	TCON |= (1<<0) | (1<<3);  /* bit0: start, bit3: auto reload */
 
+    /* 当前对中断的处理不支持嵌套，这里设置优先级为1并没有实际的意义 */
 	IRQ_CONNECT(10, 1, clock_isr, 0, 0);
 	irq_enable(10);
 

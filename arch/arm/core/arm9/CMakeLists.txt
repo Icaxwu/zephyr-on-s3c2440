@@ -5,4 +5,5 @@ zephyr_library_sources(
   reset.S
   prep_c.c
   vector_table.S
+  exe_handle.c
   )

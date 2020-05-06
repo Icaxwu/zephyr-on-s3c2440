@@ -171,6 +171,7 @@ static const struct z_exc_handle exceptions[] = {
 };
 #endif
 
+#ifndef CONFIG_ARMV4T
 /* Perform an assessment whether an MPU fault shall be
  * treated as recoverable.
  *
@@ -193,6 +194,7 @@ static int MemoryFaultIsRecoverable(NANO_ESF *esf)
 
 	return 0;
 }
+#endif
 
 #if defined(CONFIG_ARMV6_M_ARMV8_M_BASELINE)
 /* HardFault is used for all fault conditions on ARMv6-M. */
