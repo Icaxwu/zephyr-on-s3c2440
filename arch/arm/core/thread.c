@@ -176,9 +176,9 @@ void z_new_thread(struct k_thread *thread, k_thread_stack_t *stack,
 	thread->callee_saved.r1 = (u32_t)parameter1;
 	thread->callee_saved.r2 = (u32_t)parameter2;
 	thread->callee_saved.r3 = (u32_t)parameter3;
-	thread->callee_saved.lr = z_thread_entry;
+	thread->callee_saved.lr = (u32_t)z_thread_entry;
 
-	thread->callee_saved.pc = z_thread_entry;
+	thread->callee_saved.pc = (u32_t)z_thread_entry;
 	/* enbale irq, disable fiq, svc mode*/
 	thread->callee_saved.cpsr = 0x53;
 	thread->callee_saved.sp = (u32_t)stackEnd & 0xfffffffc;

@@ -25,16 +25,16 @@ GTEXT(__handleSWI)
 GTEXT(__do_swap)
 
 SECTION_FUNC(TEXT, __handleSWI)
-    stmdb sp!, { r0-r12,r14 }   @ ±£´æÊ¹ÓÃµ½µÄ¼Ä´æÆ÷
+    stmdb sp!, { r0-r12,r14 }   @ ä¿å­˜ä½¿ç”¨åˆ°çš„å¯„å­˜å™¨
     LDR   r10, [r14, #-4]
     BIC   r10, r10, #0xFF000000
     MOV   r1,  r13
-    MRS   r2,  spsr             // Èç¹û»á·¢ÉúswiÇ¶Ì×£¬ÔòĞèÒª´Ë²½Öè£¿ 
+    MRS   r2,  spsr             // å¦‚æœä¼šå‘ç”ŸswiåµŒå¥—ï¼Œåˆ™éœ€è¦æ­¤æ­¥éª¤ï¼Ÿ 
     STMFD r13!, {r2}
     BL    swi_jumptable
     LDMFD r13!, {r2}
     MSR   spsr, r2
-    ldmia   sp!,    { r0-r12,pc }^  @ ÖĞ¶Ï·µ»Ø, ^±íÊ¾½«spsrµÄÖµ¸´ÖÆµ½cpsr
+    ldmia   sp!,    { r0-r12,pc }^  @ ä¸­æ–­è¿”å›, ^è¡¨ç¤ºå°†spsrçš„å€¼å¤åˆ¶åˆ°cpsr
 swi_jumptable:
     MOV r0, r10
     B eventsSWIHandler
@@ -54,8 +54,8 @@ SECTION_FUNC(TEXT, __do_swap)
     add r0, #16   // reserved for r0 ~ r3
 	/* 
 		Store current r4-r12, sp, lr, pc, cpsr.
-		µ±Ç°lr¾ÍÊÇµÈÓÚ__do_swapÖ´ĞĞÍê±ÏºóµÄreturn address£¬__do_swapµÄÉÏÒ»¼¶º¯ÊıµÄreturn address
-		ÓÉÉÏÒ»¼¶º¯Êı×Ô¼º±£³Öµ½Õ»Àï£¬__do_swap²»ĞèÒª¹ØĞÄ¡£
+		å½“å‰lrå°±æ˜¯ç­‰äº__do_swapæ‰§è¡Œå®Œæ¯•åçš„return addressï¼Œ__do_swapçš„ä¸Šä¸€çº§å‡½æ•°çš„return address
+		ç”±ä¸Šä¸€çº§å‡½æ•°è‡ªå·±ä¿æŒåˆ°æ ˆé‡Œï¼Œ__do_swapä¸éœ€è¦å…³å¿ƒã€‚
 	*/
     STMIA   r0!, {r4-r12, lr}
     STMIA   r0!, {lr}           // pc	

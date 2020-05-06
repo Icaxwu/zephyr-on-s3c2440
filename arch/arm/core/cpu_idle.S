@@ -124,8 +124,8 @@ SECTION_FUNC(TEXT, k_cpu_idle)
 	push {r0, lr}
 	bl    z_sys_trace_idle
 #if defined(CONFIG_ARMV6_M_ARMV8_M_BASELINE)
-	pop {r0, r1}
-        mov lr, r1
+    pop {r0, r1}
+    mov lr, r1
 #else
 	pop {r0, lr}
 #endif /* CONFIG_ARMV6_M_ARMV8_M_BASELINE */

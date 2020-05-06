@@ -27,52 +27,37 @@ GTEXT(_isr_wrapper)
 SECTION_SUBSEC_FUNC(exc_vector_table,_vector_table_section,_vector_table)
     b   __reset
 
-@ 0x04: Î´¶¨ÒåÖ¸ÁîÖĞÖ¹Ä£Ê½µÄÏòÁ¿µØÖ·
+@ 0x04: æœªå®šä¹‰æŒ‡ä»¤ä¸­æ­¢æ¨¡å¼çš„å‘é‡åœ°å€
 HandleUndef:
     b   HandleUndef 
  
-@ 0x08: ¹ÜÀíÄ£Ê½µÄÏòÁ¿µØÖ·£¬Í¨¹ıSWIÖ¸Áî½øÈë´ËÄ£Ê½
+@ 0x08: ç®¡ç†æ¨¡å¼çš„å‘é‡åœ°å€ï¼Œé€šè¿‡SWIæŒ‡ä»¤è¿›å…¥æ­¤æ¨¡å¼
 __handleSWI:
     b   __handleSWI
 
-@ 0x0c: Ö¸ÁîÔ¤È¡ÖÕÖ¹µ¼ÖÂµÄÒì³£µÄÏòÁ¿µØÖ·
+@ 0x0c: æŒ‡ä»¤é¢„å–ç»ˆæ­¢å¯¼è‡´çš„å¼‚å¸¸çš„å‘é‡åœ°å€
 HandlePrefetchAbort:
     b   HandlePrefetchAbort
 
-@ 0x10: Êı¾İ·ÃÎÊÖÕÖ¹µ¼ÖÂµÄÒì³£µÄÏòÁ¿µØÖ·
+@ 0x10: æ•°æ®è®¿é—®ç»ˆæ­¢å¯¼è‡´çš„å¼‚å¸¸çš„å‘é‡åœ°å€
 HandleDataAbort:
     b   HandleDataAbort
 
-@ 0x14: ±£Áô
+@ 0x14: ä¿ç•™
 HandleNotUsed:
     b   HandleNotUsed
 
-@ 0x18: ÖĞ¶ÏÄ£Ê½µÄÏòÁ¿µØÖ·  
+@ 0x18: ä¸­æ–­æ¨¡å¼çš„å‘é‡åœ°å€  
     ldr pc, = HandleIRQ
 
-@ 0x1c: ¿ìÖĞ¶ÏÄ£Ê½µÄÏòÁ¿µØÖ·
+@ 0x1c: å¿«ä¸­æ–­æ¨¡å¼çš„å‘é‡åœ°å€
 HandleFIQ:
     b   HandleFIQ
 
 
 HandleIRQ:
-#if 0
-    /* ±£´æÏÖ³¡ */
-	/* ÔÚirqÒì³£´¦Àíº¯ÊıÖĞÓĞ¿ÉÄÜ»áĞŞ¸Är0-r12, ËùÒÔÏÈ±£´æ */
-	/* lr-4ÊÇÒì³£´¦ÀíÍêºóµÄ·µ»ØµØÖ·, Ò²Òª±£´æ */
-	sub lr, lr, #4
-	stmdb sp!, {r0-r12, lr}  
-	
-	/* ´¦ÀíirqÒì³£ */
-	bl _isr_wrapper
-	
-	bl _IntExit
-
-	/* »Ö¸´ÏÖ³¡ */
-	ldmia sp!, {r0-r12, pc}^  /* ^»á°Ñspsr_irqµÄÖµ»Ö¸´µ½cpsrÀï */
-#else
     /************************************
-    ÏÈ²»¿¼ÂÇÖĞ¶ÏÇ¶Ì×£¬Ö±½Ó±£´æ»·¾³µ½threadÀï
+    å…ˆä¸è€ƒè™‘ä¸­æ–­åµŒå¥—ï¼Œç›´æ¥ä¿å­˜ç¯å¢ƒåˆ°threadé‡Œ
     ************************************/
     stmdb	SP, {r0-r3}
     /* load _kernel into r1 and current k_thread into r2 */
@@ -83,11 +68,7 @@ HandleIRQ:
     ldr r0, =_thread_offset_to_callee_saved
     add r0, r2
     add r0, #16   // reserved for r0 ~ r3
-	/* 
-		Store current r4-r13, PC, CPSR.
-		µ±Ç°lr¾ÍÊÇµÈÓÚ__do_swapÖ´ĞĞÍê±ÏºóµÄreturn address£¬__do_swapµÄÉÏÒ»¼¶º¯ÊıµÄreturn address
-		ÓÉÉÏÒ»¼¶º¯Êı×Ô¼º±£³Öµ½Õ»Àï£¬__do_swap²»ĞèÒª¹ØĞÄ¡£
-	*/
+
     STMIA   r0!, {r4-r12}
     MRS		r3, CPSR
 	MSR     CPSR, #0xd3			// Change to SVC mode, disable irq,fiq
@@ -109,13 +90,13 @@ HandleIRQ:
 	LDMDB sp, {r0-r3}
     STMIA r4, {r0-r3}
 
-    /* ´¦ÀíirqÒì³£ */
+    /* å¤„ç†irqå¼‚å¸¸ */
 	bl _isr_wrapper
 
     bl _IntExit
 
     /************************************
-    _IntExitÖĞÃ»ÓĞÇĞ»»ÈÎÎñ£¬Ôò»Ö¸´µ½Ö®Ç°±»ÖĞ¶ÏµÄÈÎÎñ
+    _IntExitä¸­æ²¡æœ‰åˆ‡æ¢ä»»åŠ¡ï¼Œåˆ™æ¢å¤åˆ°ä¹‹å‰è¢«ä¸­æ–­çš„ä»»åŠ¡
     ************************************/
     ldr r0, =_kernel
     ldr r1, [r0, #_kernel_offset_to_current]
@@ -131,4 +112,3 @@ HandleIRQ:
 
     /* restore r0-r12, lr, pc */
     ldmia r2, {r0-r12, lr, pc}^ 
-#endif

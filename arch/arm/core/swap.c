@@ -46,6 +46,7 @@ extern const int _k_neg_eagain;
  *
  */
 #if defined(CONFIG_CPU_ARM9)
+extern void __do_swap(void);
 int __swap(int key)
 {
 	/* store return value */

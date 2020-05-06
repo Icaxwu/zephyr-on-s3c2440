@@ -40,7 +40,7 @@ void uart_s3c2440_poll_out(struct device *dev, unsigned char out_char)
 
 int uart_s3c2440_configure(struct device *dev, const struct uart_config *cfg)
 {
-    
+    return 0;
 }
 
 /* ret等于0表示驱动初始化成功，否则device_get_binding()会失败，如果调用者对这个失败情况没有做处理

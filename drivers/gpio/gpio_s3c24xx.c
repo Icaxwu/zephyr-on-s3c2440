@@ -99,10 +99,7 @@ static const struct gpio_driver_api gpio_s3c24xx_drv_api_funcs = {
 
 static int gpio_s3c24xx_init(struct device *port)
 {
-	const struct gpio_s3c24xx_cfg *cfg = get_port_cfg(port);
-
-	
-
+    
 	return 0;
 }
 

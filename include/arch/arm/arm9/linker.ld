@@ -8,7 +8,7 @@
  * @file
  * @brief Linker command/script file
  *
- * Linker script for the Cortex-M platforms.
+ * Linker script for the arm9 platforms.
  */
 
 #define _LINKER
