@@ -121,8 +121,14 @@ static int gpio_s3c24xx_init(struct device *port)
 			    &gpio_s3c24xx_drv_api_funcs)
 
 
+#ifdef CONFIG_GPIO_S3C24XX_PB
+GPIO_S3C24XX_DEVICE(B);
+#endif
+
+#ifdef CONFIG_GPIO_S3C24XX_PE
+GPIO_S3C24XX_DEVICE(E);
+#endif
+
 #ifdef CONFIG_GPIO_S3C24XX_PF
 GPIO_S3C24XX_DEVICE(F);
 #endif
-
-

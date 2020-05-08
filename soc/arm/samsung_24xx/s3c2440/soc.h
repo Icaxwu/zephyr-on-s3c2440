@@ -23,6 +23,10 @@ void _WdogInit(void);
 void _PlatformInit(void);
 void _copy2sdram(void);
 
+void z_arch_busy_wait(unsigned int time_us);
+void enable_DCACNE(void);
+void enable_ICACNE(void);
+
 #else
 	
 GTEXT(_WdogInit)

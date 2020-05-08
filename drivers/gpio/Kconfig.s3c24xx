@@ -19,13 +19,26 @@ config GPIO_S3C24XX_INIT_PRIORITY
 	help
 	  Initialization priority for S3C24XX GPIO.
 
+config GPIO_S3C24XX_PB
+	bool "S3C24XX GPIO Port PB"
+	depends on HAS_HW_S3C24XX_GPIOB
+	default y
+	help
+	  Enable S3C24XX GPIO port PB config options.
+
+config GPIO_S3C24XX_PE
+	bool "S3C24XX GPIO Port PE"
+	depends on HAS_HW_S3C24XX_GPIOE
+	default y
+	help
+	  Enable S3C24XX GPIO port PE config options.
+
 config GPIO_S3C24XX_PF
 	bool "S3C24XX GPIO Port PF"
 	depends on HAS_HW_S3C24XX_GPIOF
 	default y
 	help
 	  Enable S3C24XX GPIO port PF config options.
-
 
 endif # GPIO_S3C24XX
 

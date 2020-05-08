@@ -2,6 +2,12 @@
 config HAS_HW_S3C24XX_ADC
 	bool
 
+config HAS_HW_S3C24XX_GPIOB
+	bool
+
+config HAS_HW_S3C24XX_GPIOE
+	bool
+
 config HAS_HW_S3C24XX_GPIOF
 	bool
 

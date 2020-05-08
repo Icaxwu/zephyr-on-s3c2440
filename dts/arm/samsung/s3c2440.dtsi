@@ -15,17 +15,37 @@
 	};
 
 	aliases {
-		gpio-f = &gpiof;
+		gpio-b = &gpiob;
+        gpio-e = &gpioe;
+        gpio-f = &gpiof;
 	};
 	
 	soc {
 		#address-cells = <0x01>;
 		#size-cells = <0x01>;
 		
+        gpiob: gpio@56000010 {
+			compatible = "samsung,s3c24xx-gpio";
+			gpio-controller;
+			reg = <0x50000010 0x10>;
+			#gpio-cells = <2>;
+			label = "GPIO_B";
+			status = "ok";
+		};
+
+        gpioe: gpio@56000040 {
+			compatible = "samsung,s3c24xx-gpio";
+			gpio-controller;
+			reg = <0x50000040 0x10>;
+			#gpio-cells = <2>;
+			label = "GPIO_E";
+			status = "ok";
+		};
+
 		gpiof: gpio@56000050 {
 			compatible = "samsung,s3c24xx-gpio";
 			gpio-controller;
-			reg = <0x50000000 0x08>;
+			reg = <0x50000050 0x10>;
 			#gpio-cells = <2>;
 			label = "GPIO_F";
 			status = "ok";
