@@ -6,3 +6,4 @@ project(usb_audio)
 
 target_sources(app PRIVATE src/main.c)
 target_sources(app PRIVATE src/WM8976.c)
+target_sources(app PRIVATE src/s3c2440_i2s.c)

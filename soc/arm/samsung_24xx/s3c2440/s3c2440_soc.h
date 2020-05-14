@@ -1,7 +1,7 @@
 /*
-ÖÆ  ×÷:www.100ask.orgÉîÛÚ°ÙÎÊÍø¿Æ¼¼ÓÐÏÞ¹«Ë¾
-¹¤³ÌÊ¦£ºÎ¤¶«É½
-µ±Ç°°æ±¾£ºv1.0
+ï¿½ï¿½  ï¿½ï¿½:www.100ask.orgï¿½ï¿½ï¿½Ú°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½Þ¹ï¿½Ë¾
+ï¿½ï¿½ï¿½ï¿½Ê¦ï¿½ï¿½Î¤ï¿½ï¿½É½
+ï¿½ï¿½Ç°ï¿½æ±¾ï¿½ï¿½v1.0
 */
 
 #ifndef  __S3C2440_SOC_H
@@ -9,6 +9,7 @@
 
 #define     __REG(x)					(*(volatile unsigned int *)(x)) 
 #define     __REG_BYTE(x)				(*(volatile unsigned char *)(x)) 
+#define     __REG_HW(x)				    (*(volatile unsigned short *)(x)) 
 
 /*Memory Controllers*/
 /* SDRAM regisers */
@@ -301,7 +302,8 @@
 #define     IISMOD 	                 __REG(0x55000004)  //IIS mode            
 #define     IISPSR 	                 __REG(0x55000008)  //IIS prescaler       
 #define     IISFCON	                 __REG(0x5500000C)  //IIS FIFO control    
-#define     IISFIFO	                 __REG(0x55000010)  //HW IIS FIFO entry   
+#define     IISFIFO	                 __REG(0x55000010)  //HW IIS FIFO 
+#define     FENTRY                   __REG_HW(0x55000010)  //HW IIS FIFO entry
         
 /*I/O port*/
 #define     GPACON                   __REG(0x56000000)  //Port A control                           

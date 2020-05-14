@@ -2,11 +2,17 @@
 #include <device.h>
 #include <gpio.h>
 
+#if 1
 #define WM8976_CSB                             2
 #define WM8976_DAT                             3
 #define WM8976_CLK                             4
 #define WM8976_CTL_INTERFACE_PORT              GPIO_B_LABEL
-
+#else
+#define WM8976_CSB                             4
+#define WM8976_DAT                             5
+#define WM8976_CLK                             6
+#define WM8976_CTL_INTERFACE_PORT              GPIO_F_LABEL
+#endif
 static struct device *wm8976_ctl_gpio_dev = NULL;
 
 static void wm8976_control_interface_init(void)
@@ -66,6 +72,20 @@ void wm8976_write_reg(unsigned char reg, unsigned int data)
     gpio_pin_write(wm8976_ctl_gpio_dev, WM8976_CLK, 1);  
 }
 
+/*
+ * volume : 0~100, 0表示最小音量
+ */
+void wm8976_set_volume(int volume) {
+	//WM8976: 52,53号寄存器bit[5:0]表示音量, 值越大音量越大, 0-63
+	if (volume > 100)
+		volume = 100;
+	if (volume < 0)
+		volume = 0;
+	int val = volume * 63 / 100;
+	wm8976_write_reg(52, (1 << 8) | val);
+	wm8976_write_reg(53, (1 << 8) | val);
+}
+
 void init_wm8976(void) 
 {
 
@@ -79,13 +99,15 @@ void init_wm8976(void)
 	 * 左/右DAC打开
 	 */
 	wm8976_write_reg(0x3, 0x6f);
-	wm8976_write_reg(0x1, 0x1f);//biasen,BUFIOEN.VMIDSEL=11b
-	wm8976_write_reg(0x2, 0x185);//ROUT1EN LOUT1EN, inpu PGA enable ,ADC enable
-	wm8976_write_reg(0x6, 0x0);//SYSCLK=MCLK
-	wm8976_write_reg(0x4, 0x10);//16bit
+
+    //biasen,BUFIOEN.VMIDSEL=11b
+	wm8976_write_reg(0x1, 0x1f);  
+	wm8976_write_reg(0x2, 0x185); //ROUT1EN LOUT1EN, inpu PGA enable ,ADC enable
+	wm8976_write_reg(0x6, 0x0);   //SYSCLK=MCLK
+	wm8976_write_reg(0x4, 0x08);  //16bit, Left Justified
 	wm8976_write_reg(0x2B, 0x10); //BTL OUTPUT
 	wm8976_write_reg(0x9, 0x50);//Jack detect enable
 	wm8976_write_reg(0xD, 0x21);//Jack detect
 	wm8976_write_reg(0x7, 0x01);//Jack detect
-	//wm8976_set_volume(0);
+	wm8976_set_volume(90);
 }
