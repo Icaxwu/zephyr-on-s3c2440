@@ -58,14 +58,15 @@ void z_arch_busy_wait(unsigned int time_us)
 void clock_init(void)
 {
 	/* 设置MPLL, FCLK : HCLK : PCLK = 400m : 100m : 50m */
-	LOCKTIME = 0xFFFFFFFF;      // 使用默认值即�?
+	LOCKTIME = 0xFFFFFFFF;      // 使用默认值
 	CLKDIVN  = 0x05;            // FCLK:HCLK:PCLK=1:4:8
 
-    /* 如果HDIVN�?0，CPU的总线模式应该从“fast bus mode”变为“asynchronous bus mode�? */
+    /* If HDIVN is not 0, the CPU bus mode has to be changed from the fast bus mode to 
+       the asynchronous bus mode  */
 	__asm__(
-		"mrc    p15, 0, r1, c1, c0, 0\n"        /* 读出控制寄存�? */ 
-		"orr    r1, r1, #0xc0000000\n"          /* 设置为“asynchronous bus mode�? */
-		"mcr    p15, 0, r1, c1, c0, 0\n"        /* 写入控制寄存�? */
+		"mrc    p15, 0, r1, c1, c0, 0\n"        /* 读出控制寄存 */ 
+		"orr    r1, r1, #0xc0000000\n"          /* 设置为“asynchronous bus mode */
+		"mcr    p15, 0, r1, c1, c0, 0\n"        /* 写入控制寄存 */
     );
 
     MPLLCON = (92<<12)|(1<<4)|(1<<0); 

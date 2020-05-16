@@ -1,32 +1,34 @@
 #include <s3c2440_soc.h>
 #include <zephyr.h>
 
-#define PCLK 50000000
-#define ABS(a, b) ((a>b)?(a-b):(b-a))
+#define IISCON_INTERFACE_ENABLE                         (0x1<<0)
+#define IISCON_PRESCALER_ENABLE                         (0x1<<1)
+#define IISCON_RX_IDLE                                  (0x1<<2)
+#define IISCON_TX_IDLE                                  (0x1<<3)
+#define IISCON_RX_DMA                                   (0x1<<4)
+#define IISCON_TX_DMA                                   (0x1<<5)
 
-#define IISCON_PRESCALER_ENABLE (0x1<<1)
-#define IISCON_INTERFACE_ENABLE (0x1<<0)
-#define IISCON_INTERFACE_DISABLE (0x0<<0)
-#define IISCON_RX_IDLE (0x1<<2)
-#define IISCON_TX_IDLE (0x1<<3)
-#define IISCON_TX_DMA (0x1<<5)
-#define IISCON_RX_DMA (0x1<<4)
-#define IISCON_ENABLE_IIS (0x1<<0)
+#define IISMOD_SCLK_SHIFT                               (0)
+#define IISMOD_SCLK_SEL(X)                              ((X) << IISMOD_SCLK_SHIFT)
+#define IISMOD_MCLK_SHIFT                               (2)
+#define IISMOD_MCLK_SEL(X)                              ((X) << IISMOD_MCLK_SHIFT)
+#define IISMOD_DATA_WIDTH_SHIFT                         (3)
+#define IISMOD_DATA_WIDTH_SEL(X)                        ((X) << IISMOD_DATA_WIDTH_SHIFT)
+#define IISMOD_FORMAT_SHIFT                             (4)
+#define IISMOD_FORMAT_SEL(X)                            ((X) << IISMOD_FORMAT_SHIFT)
+#define IISMOD_ACTIVE_LEVEL_SHIFT                       (5)
+#define IISMOD_ACTIVE_LEVEL_SEL(X)                      ((X) << IISMOD_ACTIVE_LEVEL_SHIFT)
+#define IISMOD_MOD_SHIFT                                (6)
+#define IISMOD_MOD_SEL(X)                               ((X) << IISMOD_MOD_SHIFT)
+#define IISMOD_ROLE_SHIFT                               (8)
+#define IISMOD_ROLE_SEL(X)                              ((X) << IISMOD_ROLE_SHIFT)    
+#define IISMOD_MCKL_SRC_SHIFT                           (9)    
+#define IISMOD_MCLK_SRC_SEL(X)                          ((X) << IISMOD_MCKL_SRC_SHIFT)
 
-#define IISMOD_SCLK_32FS (0x1<<0)
-#define IISMOD_MCLK_384FS (0x1<<2)
-#define IISMOD_MCLK_256FS (0x0<<2)
-#define IISMOD_SERIAL_BIT_PER_CH_16 (0x1<<3)
-#define IISMOD_MSB_FORMAT (0x1<<4)
-#define IISMOD_LOW_FOR_LEFT_CH (~(0x0<<5))
-#define IISMOD_TXMOD (0x2<<6)
-
-#define IISFCON_TX_ENABLE (0x1<<13)
-#define IISFCON_RX_ENABLE (0x1<<12)
-#define IISFCON_RX_FIFO_DMA (0x1<<14)
-#define IISFCON_TX_FIFO_DMA (0x1<<15)
-#define IISFCON_TX_FIFO_NORMAL (0x0<<15)
-
+#define IISFCON_TRANSMIT_FIFO_ACCESS_MOD_SEL(X)         ((X) << 15)
+#define IISFCON_RECEIVE_FIFO_ACCESS_MOD_SEL(X)          ((X) << 14)
+#define IISFCON_TRANSMIT_FIFO_ENABLE                    (1 << 13)
+#define IISFCON_RECEIVE_FIFO_ENABLE                     (1 << 12)
 
 #define GPE0_I2SLRCK (0x2<<(2*0))
 #define GPE1_I2SSCKL (0X2<<(2*1))
@@ -56,51 +58,36 @@ void init_IIS_port() {
 	GPEUP |= GPE0_NOT_PULL_UP | GPE1_NOT_PULL_UP | GPE2_NOT_PULL_UP | GPE3_NOT_PULL_UP | GPE4_NOT_PULL_UP;
 }
 
-void init_IIS_bus(unsigned int fs) {
-    int tmp_fs;
-    int mclk_type;
-
+void init_IIS_bus(unsigned int fs) 
+{
     init_IIS_port();
 
 	IISCON = 0;
 	IISMOD = 0;
 	IISFCON = 0;
 
-	//fs:采样频率
-	/* bit[9] : Master clock select, 0-PCLK
-	 * bit[8] : 0 = Master mode
-	 * bit[7:6] : 10 = Transmit mode
-	 * bit[4] : 1 = MSB (Left)-justified format
-	 * bit[2] : 384fs, 确定了MASTER CLOCK之后, fs = MASTER CLOCK/384
-	 * bit[1:0] : Serial bit clock frequency select, 32fs
+	/* mclk: pclk
+       role: slave
+       transmit/receive mode: transmit mode
+       Serial interface format:  MSB (Left)-justified format
+       Serial data bit per channel: 16-bit
 	 */
-    mclk_type = IISMOD_MCLK_384FS;
-	IISMOD |= IISMOD_SCLK_32FS | mclk_type | IISMOD_SERIAL_BIT_PER_CH_16 | IISMOD_TXMOD | IISMOD_MSB_FORMAT;
-
+	IISMOD |= IISMOD_MCLK_SRC_SEL(0) | IISMOD_ROLE_SEL(1) | IISMOD_MOD_SEL(2)
+           | IISMOD_FORMAT_SEL(1) | IISMOD_DATA_WIDTH_SEL(1);
 
 	/*
-	 * bit15 : Transmit FIFO access mode select, 1-DMA 0-normal(default)
-	 * bit13 : Transmit FIFO, 1-enable
+	 * Transmit FIFO access mode select : Normal
+	 * Transmit FIFO                    : Enable
 	 */
-	IISFCON =  IISFCON_TX_ENABLE | IISFCON_TX_FIFO_NORMAL;
-	unsigned int min = 0xffffffff;
-	int pre	= 0;
-	for (int i = 0; i < 32; i++) {
-		tmp_fs = PCLK / (mclk_type == IISMOD_MCLK_384FS ? 384 : 256) / (i + 1);
-		if (ABS(tmp_fs, fs) < min) {
-			min = ABS(tmp_fs, fs);
-			pre = i;
+	IISFCON =  IISFCON_TRANSMIT_FIFO_ACCESS_MOD_SEL(0) | IISFCON_TRANSMIT_FIFO_ENABLE;
 
-            printk("tmp_fs %d\n", tmp_fs);
-		}
-	}
-    printk("min %d\n", min);
-	IISPSR = (pre << 5) | pre;
+    /*  CDCLK: 25M = pclk / 2
+        division factor is N+1 
+    */
+    IISPSR = 1;
 
     IISCON |= IISCON_PRESCALER_ENABLE | IISCON_RX_IDLE; 
-
-    /* enable IIS interface */
-    IISCON |= IISCON_ENABLE_IIS;
+    IISCON |= IISCON_INTERFACE_ENABLE;
 
     printk("IISCON %x, IISFCON %x, IISPSR %x, IISMOD %x\n", IISCON, IISFCON, IISPSR, IISMOD);
 }
